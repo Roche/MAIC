@@ -352,7 +352,7 @@ wt_diagnostics <- function(data, wt_col="wt", wt_rs="wt_rs", vars){
   ESS <- estimate_ess(data, wt_col)
 
   # Summary
-  summ_wts <- summarize_wts(data, wt_col)
+  summ_wts <- summarize_wts(data, wt_col, wt_rs)
 
   # Weight profiles
   profile <- profile_wts(data, wt_col, wt_rs, vars)
