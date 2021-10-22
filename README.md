@@ -5,11 +5,10 @@ This package facilitates performing matching-adjusted indirect comparison (MAIC)
 ## installation code
 ```
 devtools::install_github(
-  "roche/Global-HTA-Evidence-Open", 
-  subdir = "/Rpackages/MAIC"
+  "roche/MAIC"
   )
 ```
 
 ## documentation
 
-https://roche.github.io/Global-HTA-Evidence-Open/Rpackages/MAIC/docs/index.html
+https://roche.github.io/MAIC/index.html
