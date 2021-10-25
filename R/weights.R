@@ -26,7 +26,7 @@ gradfn <- function(a1, X){
 #' @param method The method used for optimisation - The default is method =
 #'   "BFGS". Refer to \code{\link[stats]{optim}} for options.
 #' @param ... Additional arguments to be passed to optimisation functions such
-#'   as the method for maximum likelihood optimisation. Refer to \code{\link[stats]{optim}}
+#'   as the method for maximum likelihood optimisation. Refer to \code{\link[stats]{optim}} 
 #'   for options.
 #'
 #' @details The premise of MAIC methods is to adjust for between-trial
@@ -244,13 +244,13 @@ hist_wts <- function(data, wt_col="wt", rs_wt_col="wt_rs", bin = 30) {
 
   # create visible local bindings for R CMD check
   value <- `Rescaled weights` <- Weights <- NULL
-
+  
   wt_data1 <- data %>%
     dplyr::select(tidyselect::all_of(c(wt_col, rs_wt_col))) %>% # select only the weights and rescaled weights
     dplyr::rename("Weights" = tidyselect::all_of(wt_col), "Rescaled weights" = tidyselect::all_of(rs_wt_col))  # rename so for plots
-
+  
   # tidyr::gather() # weights and rescaled weights in one column for plotting
-
+  
   wt_data <- dplyr::bind_rows(
     dplyr::transmute(wt_data1, key = "Weights", value = Weights),
     dplyr::transmute(wt_data1, key = "Rescaled weights", value = `Rescaled weights`)
