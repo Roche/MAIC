@@ -20,6 +20,7 @@ VignetteBuilder: knitr
 Imports:
     assertthat (>= 0.2.1),
     dplyr (>= 0.8.4),
+    tidyselect (>= 1.0.0),
     ggplot2 (>= 3.3.0),
     magrittr (>= 1.5),
     survival (>= 3.1),
@@ -31,6 +32,5 @@ Suggests:
     flextable,
     officer,
     survminer,
-    testthat (>= 3.0.0),
+    testthat,
     boot
-Config/testthat/edition: 3
