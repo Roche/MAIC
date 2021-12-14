@@ -5,7 +5,8 @@ This package facilitates performing matching-adjusted indirect comparison (MAIC)
 ## installation code
 ```
 devtools::install_github(
-  "roche/MAIC"
+  "roche/MAIC",
+  ref = "main"
   )
 ```
 
