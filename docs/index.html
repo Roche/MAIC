@@ -18,13 +18,7 @@
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-<![endif]--><!-- Global site tag (gtag.js) - Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=UA-181075487-1"></script><script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'UA-181075487-1');
-</script>
+<![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
     <div class="container template-home">
@@ -39,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">MAIC</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.0</span>
       </span>
     </div>
 
@@ -58,7 +52,7 @@
   <a href="reference/index.html">Functions</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Other Packages
      
     <span class="caret"></span>
@@ -107,19 +101,20 @@
 <div id="maic" class="section level1">
 <div class="page-header"><h1 class="hasAnchor">
 <a href="#maic" class="anchor"></a>MAIC</h1></div>
+
 <p>This package facilitates performing matching-adjusted indirect comparison (MAIC) anaylsis for a disconnected treatment network where the endpoint of interest is either time-to-event (e.g. overall survival) or binary (e.g. objective tumor response).</p>
 <div id="installation-code" class="section level2">
 <h2 class="hasAnchor">
 <a href="#installation-code" class="anchor"></a>installation code</h2>
-<pre><code><a href="https://devtools.r-lib.org//reference/remote-reexports.html">devtools::install_github(
-  "roche/Global-HTA-Evidence-Open", 
-  subdir = "/Rpackages/MAIC"
+<pre><code><a href="https://devtools.r-lib.org/reference/remote-reexports.html">devtools::install_github(
+  "roche/MAIC",
+  ref = "main"
   )</a></code></pre>
 </div>
 <div id="documentation" class="section level2">
 <h2 class="hasAnchor">
 <a href="#documentation" class="anchor"></a>documentation</h2>
-<p><a href="https://roche.github.io/Global-HTA-Evidence-Open/Rpackages/MAIC/docs/index.html" class="uri">https://roche.github.io/Global-HTA-Evidence-Open/Rpackages/MAIC/docs/index.html</a></p>
+<p><a href="https://roche.github.io/MAIC/index.html" class="uri">https://roche.github.io/MAIC/index.html</a></p>
 </div>
 </div>
   </div>
@@ -143,7 +138,13 @@
 </ul>
 </div>
 
-  </div>
+  <div class="dev-status">
+<h2>Dev status</h2>
+<ul class="list-unstyled">
+<li><a href="https://zenodo.org/badge/latestdoi/419687389"><img src="https://zenodo.org/badge/419687389.svg" alt="DOI"></a></li>
+</ul>
+</div>
+</div>
 </div>
 
 

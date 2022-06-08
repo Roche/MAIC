@@ -1,6 +1,15 @@
 template:
-  params:
-    ganalytics: UA-181075487-1
+  includes:
+    in_header: |
+       <!-- Global site tag (gtag.js) - Google Analytics -->
+       <script async src="https://www.googletagmanager.com/gtag/js?id=G-SGZFXJEC6X"#' ></script>
+       <script>
+         window.dataLayer = window.dataLayer || [];
+         function gtag(){dataLayer.push(arguments);}
+         gtag('js', new Date());
+
+         gtag('config', 'G-SGZFXJEC6X');
+       </script>
 
 navbar:
    title: "MAIC"
