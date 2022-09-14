@@ -19,12 +19,14 @@ RoxygenNote: 7.1.1
 VignetteBuilder: knitr
 Imports:
     assertthat (>= 0.2.1),
+    MASS (>= 0.2.1),
     dplyr (>= 0.8.4),
     tidyselect (>= 1.0.0),
     ggplot2 (>= 3.3.0),
     magrittr (>= 1.5),
     survival (>= 3.1),
-    stats (>= 2.0)
+    stats (>= 2.0),
+    emmeans
 Depends: 
     R (>= 2.10)
 Suggests: 
