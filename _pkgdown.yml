@@ -39,6 +39,9 @@ navbar:
       href: https://github.com/Roche/MAIC
        
 reference:
+- title: "Package information"
+  contents:
+  - MAIC
 - title: "Weight estimation"
   desc: "Functions for estimating weights"
 - contents: 
