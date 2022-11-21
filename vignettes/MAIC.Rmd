@@ -70,14 +70,11 @@ Care Excellence (NICE) Decision Support Unit (DSU) Technical Support Document
 MAIC methods are often required when: 
 
 * There is no common comparator treatment to link a clinical trial of a new
-intervention to clinical trials of other treatments in a given disease area. For
-example if the only study of a new intervention is a single arm trial with no
-control group. This is commonly referred to as an unanchored MAIC.
+intervention to clinical trials of other treatments in a given disease area. For example if the only study of a new intervention is a single arm trial with no control group. This is commonly referred to as an unanchored MAIC.
 * A common comparator is available to link a clinical trial of a new
 intervention to a clinical trial of one other treatment in a given disease area
 but there are substantial differences in patient demographic or disease
-characteristics that are believed to be either prognostic or treatment effect
-modifiers. This is commonly referred to as an anchored MAIC.
+characteristics that are believed to be treatment effect modifiers. This is commonly referred to as an anchored MAIC.
 
 The premise of MAIC methods is to adjust for between-trial differences in
 patient demographic or disease characteristics at baseline. When a common
@@ -255,19 +252,19 @@ target_pop_standard
 
 As described by Signorovitch et al. (supplemental appendix), we must find a
 $\beta$, such that re-weighting baseline characteristics for the intervention,
-$x_{i,ild}$ exactly matches the mean baseline characteristics for the comparator
+$x_{i,ipd}$ exactly matches the mean baseline characteristics for the comparator
 data source for which only aggregate data is available.[@signorovitch2012]
 
 The weights are given by:
-$$\hat{\omega}_i=\exp{(x_{i,ild}.\beta)}\qquad (1)$$ That is, we must find a solution to: $$
-\bar{x}_{agg}\sum_{i=1}^n \exp{(x_{i,ild}.\beta)}  = \sum_{i=1}^n
-x_{i,ild}.\exp{(x_{i,ild}.\beta)}\qquad (2)  $$ This estimator is equivalent to
-solving the equation $$ 0 = \sum_{i=1}^n (x_{i,ild} -  \bar{x}_{agg}
-).\exp{(x_{i,ild}.\beta)}\qquad (3)$$ without loss of generality, it can be assumed that
+$$\hat{\omega}_i=\exp{(x_{i,ipd}.\beta)}\qquad (1)$$ That is, we must find a solution to: $$
+\bar{x}_{agg}\sum_{i=1}^n \exp{(x_{i,ipd}.\beta)}  = \sum_{i=1}^n
+x_{i,ipd}.\exp{(x_{i,ipd}.\beta)}\qquad (2)  $$ This estimator is equivalent to
+solving the equation $$ 0 = \sum_{i=1}^n (x_{i,ipd} -  \bar{x}_{agg}
+).\exp{(x_{i,ipd}.\beta)}\qquad (3)$$ without loss of generality, it can be assumed that
 $\bar{x}_{agg} = 0$ (e.g we could transform baseline characteristics in both
 trials by subtracting  $\bar{x}_{agg}$) leaving the estimator $$0 = \sum_{i=1}^n
-(x_{i,ild})\exp{(x_{i,ild}.\beta)}\qquad (4)$$ The right hand side of this estimator is
-the first derivative of $$ Q(\beta) = \sum_{i=1}^n  \exp{(x_{i,ild}.\beta)}\qquad (5) $$
+(x_{i,ipd})\exp{(x_{i,ipd}.\beta)}\qquad (4)$$ The right hand side of this estimator is
+the first derivative of $$ Q(\beta) = \sum_{i=1}^n  \exp{(x_{i,ipd}.\beta)}\qquad (5) $$
 As described by Signorovitch et al (supplemental appendix), $Q(\beta)$ is convex
 and therefore any finite solution to (2) is unique and corresponds to the global
 minimum of $Q(\beta)$.
@@ -314,7 +311,7 @@ cent_match_cov <- c("Age_centered",
 Following the centering of the baseline characteristics of the intervention
 study, patient weights can be estimated using the <tt>estimate_weights</tt>
 function in the <tt>MAIC</tt> package. This performs an optimization procedure
-to minimize $Q(\beta) = \sum_{i=1}^n \exp{(x_{i,ild}.\beta)}$ and outputs a list
+to minimize $Q(\beta) = \sum_{i=1}^n \exp{(x_{i,ipd}.\beta)}$ and outputs a list
 containing:
 
 * A character vector containing the names of the matching variables
@@ -355,7 +352,6 @@ The <tt>MAIC</tt> package includes a function to estimate the ESS:
 ```{r}
 ESS <- estimate_ess(est_weights$analysis_data)
 ESS
-
 ```
 
 In this example, the ESS is 31% of the total number of patients in the
