@@ -65,7 +65,7 @@ response).
 The methods described in this document are based on those originally described by
 Signorovitch et al. 2012 and described in the National Institute for Health and
 Care Excellence (NICE) Decision Support Unit (DSU) Technical Support Document
-(TSD) 18.[@signorovitch2012; @phillippo2016a]
+(TSD) 18.[@signorovitch2010; @phillippo2016a]
 
 MAIC methods are often required when: 
 
@@ -252,8 +252,7 @@ target_pop_standard
 
 As described by Signorovitch et al. (supplemental appendix), we must find a
 $\beta$, such that re-weighting baseline characteristics for the intervention,
-$x_{i,ipd}$ exactly matches the mean baseline characteristics for the comparator
-data source for which only aggregate data is available.[@signorovitch2012]
+$x_{i,ipd}$ exactly matches the mean baseline characteristics for the comparator data source for which only aggregate data is available.[@signorovitch2010]
 
 The weights are given by:
 $$\hat{\omega}_i=\exp{(x_{i,ipd}.\beta)}\qquad (1)$$ That is, we must find a solution to: $$
@@ -896,7 +895,6 @@ hist(OR_bootstraps$t, main = "", xlab = "Boostrapped OR")
 abline(v= quantile(OR_bootstraps$t, probs = c(0.025,0.5,0.975)), lty=2)
 
 ```
-
 
 # References
 
