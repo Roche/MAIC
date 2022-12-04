@@ -163,31 +163,40 @@ This value (default 0.0001) will replace weights estimated at 0 in a sample.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Attaching package: ‘dplyr’</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> The following objects are masked from ‘package:stats’:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Attaching package: 'dplyr'</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> The following objects are masked from 'package:stats':</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>     filter, lag</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> The following objects are masked from ‘package:base’:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> The following objects are masked from 'package:base':</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>     intersect, setdiff, setequal, union</span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">boot</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/therneau/survival" class="external-link">survival</a></span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Attaching package: ‘survival’</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> The following object is masked from ‘package:boot’:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Attaching package: 'survival'</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> The following object is masked from 'package:boot':</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>     aml</span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">MAIC</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://www.sthda.com/english/rpkgs/survminer/" class="external-link">survminer</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rpkgs.datanovia.com/survminer/index.html" class="external-link">survminer</a></span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>package 'survminer' was built under R version 4.2.2</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Loading required package: ggpubr</span>
-<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://davidgohel.github.io/flextable/" class="external-link">flextable</a></span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>package 'ggpubr' was built under R version 4.2.1</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Attaching package: ‘flextable’</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> The following objects are masked from ‘package:ggpubr’:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Attaching package: 'survminer'</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> The following object is masked from 'package:survival':</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>     myeloma</span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ardata-fr.github.io/flextable-book/" class="external-link">flextable</a></span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>package 'flextable' was built under R version 4.2.2</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Attaching package: 'flextable'</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> The following objects are masked from 'package:ggpubr':</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>     border, font, rotate</span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ardata-fr.github.io/officeverse/" class="external-link">officer</a></span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>package 'officer' was built under R version 4.2.2</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># load intervention data with weights saved in est_weights</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">est_weights</span>, package <span class="op">=</span> <span class="st">"MAIC"</span><span class="op">)</span></span></span>
@@ -282,12 +291,6 @@ This value (default 0.0001) will replace weights estimated at 0 in a sample.</p>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> Please use `select()` instead.</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #555555;">This warning is displayed once every 8 hours.</span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #555555;">Call `lifecycle::last_lifecycle_warnings()` to see where this warning was generated.</span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Vectorized input to `element_text()` is not officially supported.</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> Results may be unexpected or may change in future versions of ggplot2.</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Vectorized input to `element_text()` is not officially supported.</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> Results may be unexpected or may change in future versions of ggplot2.</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Vectorized input to `element_text()` is not officially supported.</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> Results may be unexpected or may change in future versions of ggplot2.</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Estimating the hazard ratio (HR)</span></span></span>
@@ -363,7 +366,7 @@ This value (default 0.0001) will replace weights estimated at 0 in a sample.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Summarize the results in a table suitable for word/ powerpoint</span></span></span>
 <span class="r-in"><span><span class="va">HR_table</span> <span class="op">&lt;-</span> <span class="va">HR_summ</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span></span>
-<span class="r-in"><span>    <span class="fu"><a href="https://davidgohel.github.io/flextable/reference/flextable.html" class="external-link">regulartable</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="co">#make it a flextable object</span></span></span>
+<span class="r-in"><span>    <span class="fu"><a href="https://davidgohel.github.io/flextable/reference/regulartable.html" class="external-link">regulartable</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="co">#make it a flextable object</span></span></span>
 <span class="r-in"><span>    <span class="fu"><a href="https://davidgohel.github.io/flextable/reference/set_header_labels.html" class="external-link">set_header_labels</a></span><span class="op">(</span>Method <span class="op">=</span> <span class="st">"Method"</span>,  HR_95_CI <span class="op">=</span> <span class="st">"Hazard ratio (95% CI)"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span></span>
 <span class="r-in"><span>    <span class="fu"><a href="https://davidgohel.github.io/flextable/reference/font.html" class="external-link">font</a></span><span class="op">(</span>font <span class="op">=</span> <span class="st">'Arial'</span>, part <span class="op">=</span> <span class="st">'all'</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span></span>
 <span class="r-in"><span>    <span class="fu"><a href="https://davidgohel.github.io/flextable/reference/fontsize.html" class="external-link">fontsize</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">14</span>, part <span class="op">=</span> <span class="st">'all'</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span></span>
@@ -457,7 +460,7 @@ This value (default 0.0001) will replace weights estimated at 0 in a sample.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># turns the results to a table suitable for word/ powerpoint</span></span></span>
 <span class="r-in"><span><span class="va">OR_table</span> <span class="op">&lt;-</span> <span class="va">OR_summ</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span></span>
-<span class="r-in"><span>            <span class="fu"><a href="https://davidgohel.github.io/flextable/reference/flextable.html" class="external-link">regulartable</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="co">#make it a flextable object</span></span></span>
+<span class="r-in"><span>            <span class="fu"><a href="https://davidgohel.github.io/flextable/reference/regulartable.html" class="external-link">regulartable</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="co">#make it a flextable object</span></span></span>
 <span class="r-in"><span>            <span class="fu"><a href="https://davidgohel.github.io/flextable/reference/set_header_labels.html" class="external-link">set_header_labels</a></span><span class="op">(</span>Method <span class="op">=</span> <span class="st">"Method"</span>,  OR_95_CI <span class="op">=</span> <span class="st">"Odds ratio (95% CI)"</span><span class="op">)</span>  <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span></span>
 <span class="r-in"><span>            <span class="fu"><a href="https://davidgohel.github.io/flextable/reference/font.html" class="external-link">font</a></span><span class="op">(</span>font <span class="op">=</span> <span class="st">'Arial'</span>, part <span class="op">=</span> <span class="st">'all'</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span></span>
 <span class="r-in"><span>            <span class="fu"><a href="https://davidgohel.github.io/flextable/reference/fontsize.html" class="external-link">fontsize</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">14</span>, part <span class="op">=</span> <span class="st">'all'</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span></span>
