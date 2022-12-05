@@ -1,0 +1,101 @@
+---
+title: "Matching-Adjusted Indirect Comparison: Anchored example using the <tt>MAIC</tt> package"
+author: "Roche"
+date: "`r Sys.Date()`"
+output: 
+  rmarkdown::html_vignette:
+    number_sections: true
+csl: biomedicine.csl
+vignette: >
+  %\VignetteIndexEntry{Matching-Adjusted Indirect Comparison: Anchored example using the <tt>MAIC</tt> package}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+
+<style type="text/css">
+
+body{ /* Normal  */
+      font-size: 14px;
+  }
+td {  /* Table  */
+  font-size: 10px;
+}
+h1.title {
+  font-size: 38px;
+}
+h1 { /* Header 1 */
+  font-size: 28px;
+  }
+h2 { /* Header 2 */
+    font-size: 22px;
+}
+h3 { /* Header 3 */
+  font-size: 18px;
+}
+code.r{ /* Code block */
+    font-size: 12px;
+}
+pre { /* Code block - determines code spacing between lines */
+    font-size: 14px;
+}
+</style>
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.width = 7,
+  fig.height = 6
+)
+```
+
+# Introduction
+
+This document describes the steps to perform an anchored example of matching-adjusted indirect comparison (MAIC) analysis using the <tt>MAIC</tt> package in R where the endpoint of interest is time-to-event (e.g. overall survival). This is a preliminary example and further additions are under development. For in-depth details regarding MAIC, we ask the readers to kindly refer to the unanchored example.
+
+# Set up packages and data
+
+## Install packages
+
+The following packages are required to run this example:
+
+```{r, warning = FALSE, message = FALSE}
+library(dplyr)
+library(boot)
+library(survival)
+library(MAIC)
+library(ggplot2)
+library(MASS)
+# set seed to give reproducible example
+set.seed(1894)
+```
+
+## Generate sample data
+
+Let us first simulate an example dataset. The following R code generates a data set with a treatment indicator (i.e. treat), a prognostic variable (x1), and two effect modifiers (x2 and x3). We assume that x1 is not effect modifying and the all three covariates are binary for simplicity. The baseline hazard has a Weibull form and censoring times are randomly drawn from an exponential distribution.
+
+```{r}
+# Code is adapted from https://stats.stackexchange.com/questions/135124/how-to-create-a-toy-survival-time-to-event-data-with-right-censoring
+
+# generate covariates with some correlation
+N <- 500
+Sigma <- outer(1:3, 1:3, function(x,y) 0.5^abs(x-y)) #variance covariance matrix for covariates
+
+x <- mvrnorm(n = N, rep(0, 10), Sigma)
+x[,1] <- ifelse(x[,1] > 0.5, 1, 0) #binary predictor
+x[,2] <- ifelse(x[,2] > 0, 1, 0) #binary predictor
+x[,3] <- ifelse(x[,3] > -0.5, 1, 0) #binary predictor
+treat <- sample(x = c(0, 1), size = N, replace = TRUE, prob = c(0.5, 0.5))
+
+# Weibull latent event times
+v <- runif(n=N)
+Tlat <- (- log(v) / (lambda * exp(x * beta)))^(1 / rho)
+
+  # censoring times
+  C <- rexp(n=N, rate=rateC)
+
+```
+
+
+

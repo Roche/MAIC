@@ -191,8 +191,8 @@ intervention_input <- adsl %>%
 intervention_input <- intervention_input %>%
   mutate(AGE_SQUARED = AGE^2)
 
-match_cov <- c("AGE", "AGE_SQUARED", "SEX", "SMOKE", "ECOG0")
 head(intervention_input)
+match_cov <- c("AGE", "AGE_SQUARED", "SEX", "SMOKE", "ECOG0")
 ```
 
 ### Baseline data from the comparator trial
