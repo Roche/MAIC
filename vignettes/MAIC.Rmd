@@ -209,7 +209,6 @@ target_pop <- read.csv(system.file("extdata", "aggregate_data.csv",
 
 # Renames target population cols to be consistent with intervention_input
 target_pop_standard <- target_pop %>%
-  #EDIT
    rename(N=N,
           Treatment=ARM,
           AGE=age.mean,
@@ -255,7 +254,7 @@ analyses below.
 
 ```{r}
 #### center baseline characteristics
-# (subtract the aggregate comparator data from the corresponding column of intervention PLD)
+# (subtract the aggregate comparator data from the corresponding column of intervention IPD)
 intervention_data <- intervention_input
 for(i in match_cov){
   intervention_data[[paste0(i, "_centered")]] <- intervention_input[[i]] - target_pop_standard[,i]
