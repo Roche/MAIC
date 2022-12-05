@@ -42,8 +42,6 @@ pre { /* Code block - determines code spacing between lines */
 }
 </style>
 
-
-
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
@@ -51,7 +49,6 @@ knitr::opts_chunk$set(
   fig.width = 7,
   fig.height = 6
 )
-
 ```
 
 # Introduction
@@ -62,10 +59,7 @@ disconnected treatment network where the endpoint of interest is either
 time-to-event (e.g. overall survival) or binary (e.g. objective tumor
 response).
 
-The methods described in this document are based on those originally described by
-Signorovitch et al. 2012 and described in the National Institute for Health and
-Care Excellence (NICE) Decision Support Unit (DSU) Technical Support Document
-(TSD) 18.[@signorovitch2010; @phillippo2016a]
+The methods described in this document are based on those originally described by Signorovitch et al. 2010 and described in the National Institute for Health and Care Excellence (NICE) Decision Support Unit (DSU) Technical Support Document (TSD) 18.[@signorovitch2010; @phillippo2016a]
 
 MAIC methods are often required when: 
 
@@ -82,8 +76,7 @@ treatment comparator or ‘linked network’ are unavailable, a MAIC assumes tha
 differences between absolute outcomes that would be observed in each trial are
 entirely explained by imbalances in prognostic variables and treatment effect
 modifiers. Prognostic variables are those that are predictive of disease
-outcomes, independent of the treatment received. For example, older patients may
-have increased risk of death compared to younger patients. Treatment effect
+outcomes, independent of the treatment received. For example, older patients may have increased risk of death compared to younger patients. Treatment effect
 modifiers are those variables that influence the relative effect of one
 treatment compared to another. For example patients with a better performance
 status may experience a larger treatment benefit than those with a worse
@@ -95,25 +88,17 @@ variables/treatment effect modifiers to be used in the MAIC analyses, some of
 which include:
 
 * Clinical expertise (when available to a project)
-* Published papers/previous submissions (what has been identified in the disease
-area previously)
+* Published papers/previous submissions (what has been identified in the disease area previously)
 * Univariable/multivariable regression analyses to identify which covariates
 have a significant effect on the outcome
-* Subgroup analyses of clinical trials may identify interactions between patient
-characteristics and the relative treatment effect
+* Subgroup analyses of clinical trials may identify interactions between patient characteristics and the relative treatment effect
 
 ## Example Scenario
 
-For the purposes of this example, we present an unanchored MAIC of two treatments
-in lung cancer with the treatments being compared labelled 'intervention' and
-'comparator'. The two endpoints being compared are overall survival (a time to
-event outcome) and objective response (a binary outcome). The data used in this
-example have been simulated to resemble that of clinical trial data. The data
-available are:
+For the purposes of this example, we present an unanchored MAIC of two treatments in lung cancer with the treatments being compared labelled 'intervention' and 'comparator'. The two endpoints being compared are overall survival (a time to event outcome) and objective response (a binary outcome). The data used in this example have been simulated to resemble that of clinical trial data. The data available are:
 
 * Individual patient data from a single arm study of 'intervention'
-* Aggregate summary data for 'comparator'. This could be from a single arm study
-of the comparator or from one arm of a randomized controlled trial.
+* Aggregate summary data for 'comparator'. This could be from a single arm study of the comparator or from one arm of a randomized controlled trial.
 * Psuedo patient data from the comparator study. This is not required for the
 matching process but is needed to derive the relative treatment effects between
 the intervention and comparator.
@@ -139,8 +124,6 @@ library(flextable)
 library(officer)
 # set seed to give reproducible example
 set.seed(1894)
-
-
 ```
 
 
@@ -203,17 +186,14 @@ adtte <- adtte %>% # Time to event data (overall survival)
 intervention_input <- adsl %>%
   full_join(adrs, by=c("USUBJID", "ARM")) %>%
   full_join(adtte, by=c("USUBJID", "ARM"))
+
+# Create a variable for age squared (optional)
+intervention_input <- intervention_input %>%
+  mutate(AGE_SQUARED = AGE^2)
+
+match_cov <- c("AGE", "AGE_SQUARED", "SEX", "SMOKE", "ECOG0")
 head(intervention_input)
-
-# List out matching covariates
-match_cov <- c("AGE",
-               "SEX",
-               "SMOKE",
-               "ECOG0")
-
 ```
-
-
 
 ### Baseline data from the comparator trial
 The aggregate baseline characteristics (number of patients, mean and SD for
@@ -227,9 +207,7 @@ intervention data (<tt>intervention_input</tt>).
 target_pop <- read.csv(system.file("extdata", "aggregate_data.csv",
                                    package = "MAIC", mustWork = TRUE))
 
-# Renames target population cols to be consistent with match_cov
-match_cov
-names(target_pop)
+# Renames target population cols to be consistent with intervention_input
 target_pop_standard <- target_pop %>%
   #EDIT
    rename(N=N,
@@ -239,12 +217,11 @@ target_pop_standard <- target_pop %>%
           SMOKE=prop.smoke,
           ECOG0=prop.ecog0
   ) %>%
-  transmute(N, Treatment, AGE, SEX, SMOKE, ECOG0)
+  mutate(AGE_SQUARED = AGE^2 + age.sd^2) %>%
+  select(N, Treatment, AGE, AGE_SQUARED, SEX, SMOKE, ECOG0)
 
 target_pop_standard
 ```
-
-
 
 # Estimate weights
 
@@ -264,17 +241,13 @@ $\bar{x}_{agg} = 0$ (e.g we could transform baseline characteristics in both
 trials by subtracting  $\bar{x}_{agg}$) leaving the estimator $$0 = \sum_{i=1}^n
 (x_{i,ipd})\exp{(x_{i,ipd}.\beta)}\qquad (4)$$ The right hand side of this estimator is
 the first derivative of $$ Q(\beta) = \sum_{i=1}^n  \exp{(x_{i,ipd}.\beta)}\qquad (5) $$
-As described by Signorovitch et al (supplemental appendix), $Q(\beta)$ is convex
-and therefore any finite solution to (2) is unique and corresponds to the global
-minimum of $Q(\beta)$.
+As described by Signorovitch et al (supplemental appendix), $Q(\beta)$ is convex and therefore any finite solution to (2) is unique and corresponds to the global minimum of $Q(\beta)$.
 
 In order to facilitate estimation of patient weights, $\hat{\omega}_i$, it is
 necessary to center the baseline characteristics of the intervention data using
 the mean baseline characteristics from the comparator data.
 
-As described by Phillippo, balancing on both mean and standard deviation for
-continuous variables (where possible) may be considered in some cases. This is
-included in the example below.[@phillippo2016a]
+As described by Phillippo et al., balancing on both mean and standard deviation for continuous variables (where possible) may be considered in some cases. This is included in the example below.[@phillippo2016a]
 
 The code below also specifies an object (<tt>cent_match_cov</tt>) that contains
 the names of the centered matching variables - this will be needed for the
@@ -283,25 +256,14 @@ analyses below.
 ```{r}
 #### center baseline characteristics
 # (subtract the aggregate comparator data from the corresponding column of intervention PLD)
-names(intervention_input)
-
-intervention_data <- intervention_input %>%
-         mutate(Age_centered = AGE - target_pop$age.mean,
-                # matching on both mean and standard deviation for continuous variable (optional)
-                Age_squared_centered = (AGE^2) - (target_pop$age.mean^2 + target_pop$age.sd^2),
-                Sex_centered = SEX - target_pop$prop.male,
-                Smoke_centered = SMOKE - target_pop$prop.smoke,
-                ECOG0_centered = ECOG0 - target_pop$prop.ecog0)
-
+intervention_data <- intervention_input
+for(i in match_cov){
+  intervention_data[[paste0(i, "_centered")]] <- intervention_input[[i]] - target_pop_standard[,i]
+}
 head(intervention_data)
 
 # Set matching covariates
-cent_match_cov <- c("Age_centered",
-                    "Age_squared_centered",
-                    "Sex_centered",
-                    "Smoke_centered",
-                    "ECOG0_centered")
-
+cent_match_cov <- paste0(match_cov, "_centered")
 ```
 
 
@@ -319,12 +281,8 @@ containing:
 ```{r}
 est_weights <- estimate_weights(intervention_data = intervention_data,
                                 matching_vars = cent_match_cov)
-
 head(est_weights$analysis_data)
-
 est_weights$matching_vars
-
-
 ```
 
 
@@ -340,7 +298,7 @@ For a weighted estimate, the effective sample size (ESS) is the number of
 independent non-weighted individuals that would be required to give an estimate
 with the same precision as the weighted sample estimate. The approximate
 effective sample size is calculated as: $$ ESS =  \frac{({ \sum_{i=1}^n
-\hat{\omega}_i })^2}{ \sum_{i=1}^n \hat{\omega^2}_i  } $$ A small ESS, relative
+\hat{\omega}_i })^2}{ \sum_{i=1}^n \hat{\omega}_i^2} $$ A small ESS, relative
 to the original sample size, is an indication that the weights are highly
 variable and that the estimate may be unstable. This often occurs if there is
 very limited overlap in the distribution of the matching variables between the
@@ -364,15 +322,14 @@ included in the adjustment, the estimates will remain biased.[@phillippo2016a;
 
 #### Rescaled weights
 
-It is easier to examine the distribution of the weights by scaling them, so that
-the rescaled weights are relative to the original unit weights of each
+It is easier to examine the distribution of the weights by scaling them, so that the rescaled weights are relative to the original unit weights of each
 individual. In other words, a rescaled weight $>$ 1 means that an individual
 carries more weight in the re-weighted population than the original data and a
 rescaled weight $<$ 1 means that an individual carries less weight in the
 re-weighted population than the original data. The rescaled weights are
 calculated as:
 
-$$\tilde{\omega}_i  =  \frac{  \hat{\omega}_i}{ \sum_{i=1}^n \hat{\omega}_i }.N $$
+$$\tilde{\omega}_i  =  \frac{  \hat{\omega}_i}{ \sum_{i=1}^n \hat{\omega}_i }\times N $$
 
 A histogram of the rescaled weights (along with a histogram of the weights) can
 be produced using the <tt>hist_wts</tt> function in the <tt>MAIC</tt>
@@ -384,8 +341,6 @@ the data set by using the <tt>bin</tt> statement.
 # bin_width needs to be adapted depending on the sample size in the data set
 histogram <- hist_wts(est_weights$analysis_data, bin = 50)
 histogram
-
-
 ```
 
 The distribution of rescaled weights can be further explored by producing a
@@ -396,8 +351,6 @@ to produce this summary for the rescaled weights and the weights.
 ```{r}
 weight_summ <- summarize_wts(est_weights$analysis_data)
 weight_summ
-
-
 ```
 
 To understand which individuals are carrying more or less weight in the
@@ -412,7 +365,6 @@ influence on the weighted analyses.
 ```{r}
 wts_profile <- profile_wts(est_weights$analysis_data, vars = match_cov)
 head(wts_profile)
-
 ```
 
 #### Overall weight diagnostics summary function
@@ -429,61 +381,16 @@ the function <tt>wt_diagnostics</tt> which brings together the three functions:
 diagnostics <- wt_diagnostics(est_weights$analysis_data, vars = match_cov)
 
 diagnostics$ESS
-
 diagnostics$Summary_of_weights
 head(diagnostics$Weight_profiles)
-
-
-
 ```
 
 ### Has the optimization worked?
 
-The following code checks whether the re-weighted baseline characteristics for
-the intervention-treated patients match those aggregate characteristics from the
-comparator trial and outputs a summary that can be used for reporting.
+The following function checks whether the re-weighted baseline characteristics for the intervention-treated patients match those aggregate characteristics from the comparator trial and outputs a summary that can be used for reporting.
 
 ```{r}
-# Create an object to hold the output
-baseline_summary <- list('Intervention' = NA, 
-                         'Intervention_weighted' = NA, 
-                         'Comparator' = NA)
-
-# Summarise matching variables for weighted intervention data
-baseline_summary$Intervention_weighted <- est_weights$analysis_data %>%
-   transmute(AGE, SEX, SMOKE, ECOG0, wt) %>%
-   summarise_at(match_cov, list(~ weighted.mean(., wt)))
-
-# Summarise matching variables for unweighted intervention data
-baseline_summary$Intervention <- est_weights$analysis_data %>%
-   transmute(AGE, SEX, SMOKE, ECOG0, wt) %>%
-   summarise_at(match_cov, list(~ mean(.)))
-
-# baseline data for the comparator study
-baseline_summary$Comparator <- transmute(target_pop_standard, AGE, SEX, SMOKE, ECOG0)
-
-# Combine the three summaries
-# Takes a list of data frames and binds these together
-trt <- names(baseline_summary)
-
-baseline_summary <- bind_rows(baseline_summary) %>%
-  transmute_all(sprintf, fmt = "%.2f") %>% #apply rounding for presentation
-  transmute(ARM = as.character(trt), AGE, SEX, SMOKE, ECOG0)
-
-# Insert N of intervention  as number of patients
-baseline_summary$`N/ESS`[baseline_summary$ARM == "Intervention"] <- nrow(est_weights$analysis_data)
-
-# Insert N for comparator from target_pop_standard
-baseline_summary$`N/ESS`[baseline_summary$ARM == "Comparator"] <- target_pop_standard$N
-
-# Insert the ESS as the sample size for the weighted data
-# This is calculated above but can also be obtained using the estimate_ess function as shown below
-baseline_summary$`N/ESS`[baseline_summary$ARM == "Intervention_weighted"] <- est_weights$analysis_data %>%
-  estimate_ess(wt_col = 'wt')
-
-baseline_summary <- baseline_summary %>%
-  transmute(ARM, `N/ESS`=round(`N/ESS`,1), AGE, SEX, SMOKE, ECOG0)
-baseline_summary
+check_weights(est_weights$analysis_data, match_cov, target_pop_standard)
 ```
 
 
@@ -498,15 +405,13 @@ the weighted analysis.
 
 Pseudo overall survival data was obtained for the comparator treatment by
 digitizing a reported overall survival Kaplan-Meier graph using the methodology
-of Guyot et al.[@guyot2012] It is common for binary endpoints to be reported as
-a percentage of patients with the event and therefore the example code below
-simulates pseudo-data for objective response based on the total number of
-patients and the proportion of responders.
+of Guyot et al.[@guyot2012] Recently, Liu et al introduced an R package <tt>IPDfromKM</tt> that facilitates these methodologies.[@Liu2021]
+
+It is common for binary endpoints to be reported as a percentage of patients with the event and therefore the example code below simulates pseudo-data for objective response based on the total number of patients and the proportion of responders.
 
 The comparator data will include pseudo individual patient data from two
 different endpoints and it should be highlighted that there is no 1:1
-relationship between endpoints for a given patient since these are reconstructed
-data and not actual observed data.
+relationship between endpoints for a given patient since these are reconstructed data and not actual observed data.
 
 Naming of variables in the comparator data should be consistent with those used
 in the intervention IPD.

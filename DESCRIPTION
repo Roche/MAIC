@@ -1,7 +1,7 @@
 Package: MAIC
 Type: Package
 Title: Package to Perform Matched-adjusted Indirect Comparisons
-Version: 0.3.0
+Version: 0.4.0
 Authors@R: c(
     person("Iain", "Bennett", email = "iain.bennett@roche.com", role = "cre"),
     person("Jo", "Gregory", email = "joanne.gregory@bresmed.com", role = "aut"),

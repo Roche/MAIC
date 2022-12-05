@@ -54,6 +54,7 @@ reference:
   - profile_wts
   - summarize_wts
   - wt_diagnostics
+  - check_weights
 - title: "Analysis of MAIC models"
   desc: "Functions for analysing and reporting after weights have been estimated."
 - contents:
