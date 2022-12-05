@@ -339,7 +339,6 @@ data (<tt>intervention_input</tt>).</p>
 <span></span>
 <span><span class="co"># Renames target population cols to be consistent with intervention_input</span></span>
 <span><span class="va">target_pop_standard</span> <span class="op">&lt;-</span> <span class="va">target_pop</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="co">#EDIT</span></span>
 <span>   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html" class="external-link">rename</a></span><span class="op">(</span>N<span class="op">=</span><span class="va">N</span>,</span>
 <span>          Treatment<span class="op">=</span><span class="va">ARM</span>,</span>
 <span>          AGE<span class="op">=</span><span class="va">age.mean</span>,</span>
@@ -395,7 +394,7 @@ that contains the names of the centered matching variables - this will
 be needed for the analyses below.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#### center baseline characteristics</span></span>
-<span><span class="co"># (subtract the aggregate comparator data from the corresponding column of intervention PLD)</span></span>
+<span><span class="co"># (subtract the aggregate comparator data from the corresponding column of intervention IPD)</span></span>
 <span><span class="va">intervention_data</span> <span class="op">&lt;-</span> <span class="va">intervention_input</span></span>
 <span><span class="kw">for</span><span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="va">match_cov</span><span class="op">)</span><span class="op">{</span></span>
 <span>  <span class="va">intervention_data</span><span class="op">[[</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">i</span>, <span class="st">"_centered"</span><span class="op">)</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">intervention_input</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span> <span class="op">-</span> <span class="va">target_pop_standard</span><span class="op">[</span>,<span class="va">i</span><span class="op">]</span></span>
@@ -613,9 +612,9 @@ to derive the relative treatment effects. These patients are given a
 weight of 1 for use in the weighted analysis.</p>
 <p>Pseudo overall survival data was obtained for the comparator
 treatment by digitizing a reported overall survival Kaplan-Meier graph
-using the methodology of Guyot et al.<span class="citation">[4]</span>
-Recently, Liu et al introduced an R package <tt>IPDfromKM</tt> that
-facilitates these methodologies.<span class="citation">[5]</span></p>
+using the methodology of Guyot et al. <span class="citation">[4]</span>
+Recently, Liu et al. introduced an R package <tt>IPDfromKM</tt> that
+facilitates this method. <span class="citation">[5]</span></p>
 <p>It is common for binary endpoints to be reported as a percentage of
 patients with the event and therefore the example code below simulates
 pseudo-data for objective response based on the total number of patients
@@ -684,21 +683,20 @@ the analysis.</p>
 <h4 id="bootstrapping-a-confidence-interval">Bootstrapping a confidence interval<a class="anchor" aria-label="anchor" href="#bootstrapping-a-confidence-interval"></a>
 </h4>
 <p>The use of weights induces a within-subject correlation in outcomes,
-as observations can have weights that are unequal to one another <span class="citation">[6,7]</span>. As such, it is necessary to use a
-variance estimator to take into account the lack of independence of
-observations. The two common approaches to this are robust variance
-estimation and bootstrapping. A simulation study was conducted by Austin
-et al to examine the different methods in the context of an inverse
-probability of treatment weighting (IPTW) survival analysis. The author
-concluded that the use of a bootstrap estimator resulted in
-approximately correct estimates of standard errors and confidence
-intervals with the correct coverage rate. The other estimators resulted
-in biased estimates of standard errors and confidence intervals with
-incorrect coverage rates. The use of a bootstrap type estimator is also
-intuitively appealing, a robust estimator assumes that the weights are
-known and not subject to any sampling uncertainty. However, a bootstrap
-estimator allows for quantification of the uncertainty in the estimation
-of the weights.</p>
+as observations can have weights that are unequal to one another. <span class="citation">[6,7]</span> As such, it is necessary to use a variance
+estimator to take into account the lack of independence of observations.
+The two common approaches to this are robust variance estimation and
+bootstrapping. A simulation study was conducted by Austin et al to
+examine the different methods in the context of an inverse probability
+of treatment weighting (IPTW) survival analysis. <span class="citation">[6]</span> The author concluded that the use of a
+bootstrap estimator resulted in approximately correct estimates of
+standard errors and confidence intervals with the correct coverage rate.
+The other estimators resulted in biased estimates of standard errors and
+confidence intervals with incorrect coverage rates. The use of a
+bootstrap type estimator is also intuitively appealing, a robust
+estimator assumes that the weights are known and not subject to any
+sampling uncertainty. However, a bootstrap estimator allows for
+quantification of the uncertainty in the estimation of the weights.</p>
 <p>Bootstrapping involves:</p>
 <ol style="list-style-type: decimal">
 <li>Sampling, with replacement, from the patients in the intervention
@@ -886,7 +884,7 @@ comparator treatment.</p>
 <span>  <span class="fu"><a href="https://davidgohel.github.io/flextable/reference/autofit.html" class="external-link">autofit</a></span><span class="op">(</span>add_w <span class="op">=</span> <span class="fl">0.2</span>, add_h <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">HR_table</span></span></code></pre></div>
-<template id="39cc047f-bd07-45d6-8e9e-46dfb7892829"><style>
+<template id="5737ada1-a1cb-4dd6-a977-d6e1f317ac62"><style>
 .tabwid table{
   border-spacing:0px !important;
   border-collapse:collapse;
@@ -926,35 +924,35 @@ background-color: transparent;
 }
 </style>
 <div class="tabwid">
-<style>.cl-6c3c15fa{}.cl-6c312bea{font-family:'Arial';font-size:14pt;font-weight:bold;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-6c312bf4{font-family:'Arial';font-size:14pt;font-weight:normal;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-6c36cbea{margin:0;text-align:left;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-6c36cbfe{margin:0;text-align:center;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-6c36e1b6{width:3.962in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 1pt solid rgba(0, 0, 0, 1.00);border-left: 1pt solid rgba(0, 0, 0, 1.00);border-right: 1pt solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-6c36e1c0{width:2.33in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 1pt solid rgba(0, 0, 0, 1.00);border-left: 1pt solid rgba(0, 0, 0, 1.00);border-right: 1pt solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-6c36e1c1{width:3.962in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 1pt solid rgba(0, 0, 0, 1.00);border-right: 1pt solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-6c36e1ca{width:2.33in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 1pt solid rgba(0, 0, 0, 1.00);border-right: 1pt solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}</style>
-<table class="table cl-6c3c15fa">
+<style>.cl-0fd46d02{}.cl-0fcbe010{font-family:'Arial';font-size:14pt;font-weight:bold;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-0fcbe01a{font-family:'Arial';font-size:14pt;font-weight:normal;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-0fcf36fc{margin:0;text-align:left;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-0fcf3706{margin:0;text-align:center;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-0fcf4afc{width:3.962in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 1pt solid rgba(0, 0, 0, 1.00);border-left: 1pt solid rgba(0, 0, 0, 1.00);border-right: 1pt solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-0fcf4b06{width:2.33in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 1pt solid rgba(0, 0, 0, 1.00);border-left: 1pt solid rgba(0, 0, 0, 1.00);border-right: 1pt solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-0fcf4b07{width:3.962in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 1pt solid rgba(0, 0, 0, 1.00);border-right: 1pt solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-0fcf4b10{width:2.33in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 1pt solid rgba(0, 0, 0, 1.00);border-right: 1pt solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}</style>
+<table class="table cl-0fd46d02">
 <thead><tr style="overflow-wrap:break-word;">
-<th class="cl-6c36e1b6"><p class="cl-6c36cbea"><span class="cl-6c312bea">Method</span></p></th>
-<th class="cl-6c36e1c0"><p class="cl-6c36cbfe"><span class="cl-6c312bea">Hazard ratio (95% CI)</span></p></th>
+<th class="cl-0fcf4afc"><p class="cl-0fcf36fc"><span class="cl-0fcbe010">Method</span></p></th>
+<th class="cl-0fcf4b06"><p class="cl-0fcf3706"><span class="cl-0fcbe010">Hazard ratio (95% CI)</span></p></th>
 </tr></thead>
 <tbody>
 <tr style="overflow-wrap:break-word;">
-<td class="cl-6c36e1c1"><p class="cl-6c36cbea"><span class="cl-6c312bf4">HR (95% CI) from unadjusted Cox model</span></p></td>
-<td class="cl-6c36e1ca"><p class="cl-6c36cbfe"><span class="cl-6c312bf4">0.375 (0.304 to 0.462)</span></p></td>
+<td class="cl-0fcf4b07"><p class="cl-0fcf36fc"><span class="cl-0fcbe01a">HR (95% CI) from unadjusted Cox model</span></p></td>
+<td class="cl-0fcf4b10"><p class="cl-0fcf3706"><span class="cl-0fcbe01a">0.375 (0.304 to 0.462)</span></p></td>
 </tr>
 <tr style="overflow-wrap:break-word;">
-<td class="cl-6c36e1b6"><p class="cl-6c36cbea"><span class="cl-6c312bf4">HR (95% CI) from weighted Cox model</span></p></td>
-<td class="cl-6c36e1c0"><p class="cl-6c36cbfe"><span class="cl-6c312bf4">0.286 (0.207 to 0.396)</span></p></td>
+<td class="cl-0fcf4afc"><p class="cl-0fcf36fc"><span class="cl-0fcbe01a">HR (95% CI) from weighted Cox model</span></p></td>
+<td class="cl-0fcf4b06"><p class="cl-0fcf3706"><span class="cl-0fcbe01a">0.286 (0.207 to 0.396)</span></p></td>
 </tr>
 <tr style="overflow-wrap:break-word;">
-<td class="cl-6c36e1b6"><p class="cl-6c36cbea"><span class="cl-6c312bf4">Bootstrap median HR (95% percentile CI)</span></p></td>
-<td class="cl-6c36e1c0"><p class="cl-6c36cbfe"><span class="cl-6c312bf4">0.289 (0.218 to 0.369)</span></p></td>
+<td class="cl-0fcf4afc"><p class="cl-0fcf36fc"><span class="cl-0fcbe01a">Bootstrap median HR (95% percentile CI)</span></p></td>
+<td class="cl-0fcf4b06"><p class="cl-0fcf3706"><span class="cl-0fcbe01a">0.289 (0.218 to 0.369)</span></p></td>
 </tr>
 <tr style="overflow-wrap:break-word;">
-<td class="cl-6c36e1b6"><p class="cl-6c36cbea"><span class="cl-6c312bf4">Bootstrap median HR (95% BCa CI)</span></p></td>
-<td class="cl-6c36e1c0"><p class="cl-6c36cbfe"><span class="cl-6c312bf4">0.289 (0.215 to 0.367)</span></p></td>
+<td class="cl-0fcf4afc"><p class="cl-0fcf36fc"><span class="cl-0fcbe01a">Bootstrap median HR (95% BCa CI)</span></p></td>
+<td class="cl-0fcf4b06"><p class="cl-0fcf3706"><span class="cl-0fcbe01a">0.289 (0.215 to 0.367)</span></p></td>
 </tr>
 </tbody>
 </table>
-</div></template><div class="flextable-shadow-host" id="d8fb2f4b-8bc1-4eee-b9f3-63d22d2111a2"></div>
+</div></template><div class="flextable-shadow-host" id="73700536-32ce-4eec-b452-129f622d298d"></div>
 <script>
-var dest = document.getElementById("d8fb2f4b-8bc1-4eee-b9f3-63d22d2111a2");
-var template = document.getElementById("39cc047f-bd07-45d6-8e9e-46dfb7892829");
+var dest = document.getElementById("73700536-32ce-4eec-b452-129f622d298d");
+var template = document.getElementById("5737ada1-a1cb-4dd6-a977-d6e1f317ac62");
 var fantome = dest.attachShadow({mode: 'open'});
 var templateContent = template.content;
 fantome.appendChild(templateContent);
@@ -1092,7 +1090,7 @@ values are no longer a integer value.</p>
 <span>  <span class="fu"><a href="https://davidgohel.github.io/flextable/reference/border_inner_v.html" class="external-link">border_inner_v</a></span><span class="op">(</span>border <span class="op">=</span> <span class="fu"><a href="https://davidgohel.github.io/officer/reference/fp_border.html" class="external-link">fp_border</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://davidgohel.github.io/flextable/reference/autofit.html" class="external-link">autofit</a></span><span class="op">(</span>add_w <span class="op">=</span> <span class="fl">0.2</span><span class="op">)</span></span>
 <span><span class="va">OR_table</span></span></code></pre></div>
-<template id="6654ef6c-2994-4f2a-9710-67b92f32579a"><style>
+<template id="8c0e0729-87d7-42ca-983b-a07f06ce1bb2"><style>
 .tabwid table{
   border-spacing:0px !important;
   border-collapse:collapse;
@@ -1132,35 +1130,35 @@ background-color: transparent;
 }
 </style>
 <div class="tabwid">
-<style>.cl-754ce480{}.cl-754217bc{font-family:'Arial';font-size:14pt;font-weight:bold;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-754217c6{font-family:'Arial';font-size:14pt;font-weight:normal;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-75461204{margin:0;text-align:left;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-75461218{margin:0;text-align:center;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-7546285c{width:5.14in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 1pt solid rgba(0, 0, 0, 1.00);border-left: 1pt solid rgba(0, 0, 0, 1.00);border-right: 1pt solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-75462866{width:2.299in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 1pt solid rgba(0, 0, 0, 1.00);border-left: 1pt solid rgba(0, 0, 0, 1.00);border-right: 1pt solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-75462867{width:5.14in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 1pt solid rgba(0, 0, 0, 1.00);border-right: 1pt solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-75462870{width:2.299in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 1pt solid rgba(0, 0, 0, 1.00);border-right: 1pt solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-75462871{width:5.14in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 1pt solid rgba(0, 0, 0, 1.00);border-left: 1pt solid rgba(0, 0, 0, 1.00);border-right: 1pt solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-7546287a{width:2.299in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 1pt solid rgba(0, 0, 0, 1.00);border-left: 1pt solid rgba(0, 0, 0, 1.00);border-right: 1pt solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}</style>
-<table class="table cl-754ce480">
+<style>.cl-1933f7be{}.cl-192a984a{font-family:'Arial';font-size:14pt;font-weight:bold;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-192a985e{font-family:'Arial';font-size:14pt;font-weight:normal;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-192e2c08{margin:0;text-align:left;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-192e2c1c{margin:0;text-align:center;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-192e3f36{width:5.14in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 1pt solid rgba(0, 0, 0, 1.00);border-left: 1pt solid rgba(0, 0, 0, 1.00);border-right: 1pt solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-192e3f40{width:2.299in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 1pt solid rgba(0, 0, 0, 1.00);border-left: 1pt solid rgba(0, 0, 0, 1.00);border-right: 1pt solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-192e3f41{width:5.14in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 1pt solid rgba(0, 0, 0, 1.00);border-right: 1pt solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-192e3f42{width:2.299in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 1pt solid rgba(0, 0, 0, 1.00);border-right: 1pt solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-192e3f4a{width:5.14in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 1pt solid rgba(0, 0, 0, 1.00);border-left: 1pt solid rgba(0, 0, 0, 1.00);border-right: 1pt solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-192e3f4b{width:2.299in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 1pt solid rgba(0, 0, 0, 1.00);border-left: 1pt solid rgba(0, 0, 0, 1.00);border-right: 1pt solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}</style>
+<table class="table cl-1933f7be">
 <thead><tr style="overflow-wrap:break-word;">
-<th class="cl-7546285c"><p class="cl-75461204"><span class="cl-754217bc">Method</span></p></th>
-<th class="cl-75462866"><p class="cl-75461218"><span class="cl-754217bc">Odds ratio (95% CI)</span></p></th>
+<th class="cl-192e3f36"><p class="cl-192e2c08"><span class="cl-192a984a">Method</span></p></th>
+<th class="cl-192e3f40"><p class="cl-192e2c1c"><span class="cl-192a984a">Odds ratio (95% CI)</span></p></th>
 </tr></thead>
 <tbody>
 <tr style="overflow-wrap:break-word;">
-<td class="cl-75462867"><p class="cl-75461204"><span class="cl-754217c6">OR (95% CI) from unadjusted logistic regression model</span></p></td>
-<td class="cl-75462870"><p class="cl-75461218"><span class="cl-754217c6">5.318 (3.888 to 7.275)</span></p></td>
+<td class="cl-192e3f41"><p class="cl-192e2c08"><span class="cl-192a985e">OR (95% CI) from unadjusted logistic regression model</span></p></td>
+<td class="cl-192e3f42"><p class="cl-192e2c1c"><span class="cl-192a985e">5.318 (3.888 to 7.275)</span></p></td>
 </tr>
 <tr style="overflow-wrap:break-word;">
-<td class="cl-75462871"><p class="cl-75461204"><span class="cl-754217c6">OR (95% CI) from weighted logistic regression model</span></p></td>
-<td class="cl-7546287a"><p class="cl-75461218"><span class="cl-754217c6">3.787 (2.558 to 5.605)</span></p></td>
+<td class="cl-192e3f4a"><p class="cl-192e2c08"><span class="cl-192a985e">OR (95% CI) from weighted logistic regression model</span></p></td>
+<td class="cl-192e3f4b"><p class="cl-192e2c1c"><span class="cl-192a985e">3.787 (2.558 to 5.605)</span></p></td>
 </tr>
 <tr style="overflow-wrap:break-word;">
-<td class="cl-7546285c"><p class="cl-75461204"><span class="cl-754217c6">Bootstrap median HR (95% percentile CI)</span></p></td>
-<td class="cl-75462866"><p class="cl-75461218"><span class="cl-754217c6">3.784 (2.693 to 5.448)</span></p></td>
+<td class="cl-192e3f36"><p class="cl-192e2c08"><span class="cl-192a985e">Bootstrap median HR (95% percentile CI)</span></p></td>
+<td class="cl-192e3f40"><p class="cl-192e2c1c"><span class="cl-192a985e">3.784 (2.693 to 5.448)</span></p></td>
 </tr>
 <tr style="overflow-wrap:break-word;">
-<td class="cl-7546285c"><p class="cl-75461204"><span class="cl-754217c6">Bootstrap median HR (95% BCa CI)</span></p></td>
-<td class="cl-75462866"><p class="cl-75461218"><span class="cl-754217c6">3.784 (2.669 to 5.402)</span></p></td>
+<td class="cl-192e3f36"><p class="cl-192e2c08"><span class="cl-192a985e">Bootstrap median HR (95% BCa CI)</span></p></td>
+<td class="cl-192e3f40"><p class="cl-192e2c1c"><span class="cl-192a985e">3.784 (2.669 to 5.402)</span></p></td>
 </tr>
 </tbody>
 </table>
-</div></template><div class="flextable-shadow-host" id="ef0ddf27-aa63-49b6-be7b-32867bc571e8"></div>
+</div></template><div class="flextable-shadow-host" id="be35294a-5cfb-4718-a24b-ed1d581f578e"></div>
 <script>
-var dest = document.getElementById("ef0ddf27-aa63-49b6-be7b-32867bc571e8");
-var template = document.getElementById("6654ef6c-2994-4f2a-9710-67b92f32579a");
+var dest = document.getElementById("be35294a-5cfb-4718-a24b-ed1d581f578e");
+var template = document.getElementById("8c0e0729-87d7-42ca-983b-a07f06ce1bb2");
 var fantome = dest.attachShadow({mode: 'open'});
 var templateContent = template.content;
 fantome.appendChild(templateContent);
@@ -1263,7 +1261,7 @@ Journal of the American Statistical Association 1987;82:171–85.</div>
 
       <footer><div class="copyright">
   <p></p>
-<p>Developed by Iain Bennett, Jo Gregory, Sarah Smith, Richard Birnie.</p>
+<p>Developed by Jo Gregory, Michael Seo, Sarah Smith, Richard Birnie, Iain Bennett.</p>
 </div>
 
 <div class="pkgdown">
