@@ -39,7 +39,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MAIC</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.3.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.4.0</span>
       </span>
     </div>
 
@@ -110,7 +110,7 @@
 using the <tt>MAIC</tt> package</h1>
                         <h4 data-toc-skip class="author">Roche</h4>
             
-            <h4 data-toc-skip class="date">2022-12-04</h4>
+            <h4 data-toc-skip class="date">2022-12-05</h4>
       
       
       <div class="hidden name"><code>MAIC.Rmd</code></div>
@@ -155,7 +155,7 @@ matching-adjusted indirect comparison (MAIC) analysis using the
 the endpoint of interest is either time-to-event (e.g. overall survival)
 or binary (e.g. objective tumor response).</p>
 <p>The methods described in this document are based on those originally
-described by Signorovitch et al. 2012 and described in the National
+described by Signorovitch et al. 2010 and described in the National
 Institute for Health and Care Excellence (NICE) Decision Support Unit
 (DSU) Technical Support Document (TSD) 18.<span class="citation">[1,2]</span></p>
 <p>MAIC methods are often required when:</p>
@@ -308,20 +308,20 @@ and 0 (see example for sex below).</li>
 <span><span class="va">intervention_input</span> <span class="op">&lt;-</span> <span class="va">adsl</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">full_join</a></span><span class="op">(</span><span class="va">adrs</span>, by<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"USUBJID"</span>, <span class="st">"ARM"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">full_join</a></span><span class="op">(</span><span class="va">adtte</span>, by<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"USUBJID"</span>, <span class="st">"ARM"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">intervention_input</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   USUBJID ARM AGE SEX SMOKE ECOG0 response     Time Event</span></span>
-<span><span class="co">#&gt; 1       1   A  45   1     0     0        0 281.5195     0</span></span>
-<span><span class="co">#&gt; 2       2   A  71   1     0     0        1 500.0000     0</span></span>
-<span><span class="co">#&gt; 3       3   A  58   1     1     1        1 304.6406     0</span></span>
-<span><span class="co">#&gt; 4       4   A  48   0     0     1        1 102.4731     0</span></span>
-<span><span class="co">#&gt; 5       5   A  69   1     0     1        0 101.6632     0</span></span>
-<span><span class="co">#&gt; 6       6   A  48   0     0     1        0 237.0593     1</span></span>
 <span></span>
-<span><span class="co"># List out matching covariates</span></span>
-<span><span class="va">match_cov</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"AGE"</span>,</span>
-<span>               <span class="st">"SEX"</span>,</span>
-<span>               <span class="st">"SMOKE"</span>,</span>
-<span>               <span class="st">"ECOG0"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="co"># Create a variable for age squared (optional)</span></span>
+<span><span class="va">intervention_input</span> <span class="op">&lt;-</span> <span class="va">intervention_input</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>AGE_SQUARED <span class="op">=</span> <span class="va">AGE</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">match_cov</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"AGE"</span>, <span class="st">"AGE_SQUARED"</span>, <span class="st">"SEX"</span>, <span class="st">"SMOKE"</span>, <span class="st">"ECOG0"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">intervention_input</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   USUBJID ARM AGE SEX SMOKE ECOG0 response     Time Event AGE_SQUARED</span></span>
+<span><span class="co">#&gt; 1       1   A  45   1     0     0        0 281.5195     0        2025</span></span>
+<span><span class="co">#&gt; 2       2   A  71   1     0     0        1 500.0000     0        5041</span></span>
+<span><span class="co">#&gt; 3       3   A  58   1     1     1        1 304.6406     0        3364</span></span>
+<span><span class="co">#&gt; 4       4   A  48   0     0     1        1 102.4731     0        2304</span></span>
+<span><span class="co">#&gt; 5       5   A  69   1     0     1        0 101.6632     0        4761</span></span>
+<span><span class="co">#&gt; 6       6   A  48   0     0     1        0 237.0593     1        2304</span></span></code></pre></div>
 </div>
 <div class="section level4">
 <h4 id="baseline-data-from-the-comparator-trial">Baseline data from the comparator trial<a class="anchor" aria-label="anchor" href="#baseline-data-from-the-comparator-trial"></a>
@@ -337,12 +337,7 @@ data (<tt>intervention_input</tt>).</p>
 <span><span class="va">target_pop</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"aggregate_data.csv"</span>,</span>
 <span>                                   package <span class="op">=</span> <span class="st">"MAIC"</span>, mustWork <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Renames target population cols to be consistent with match_cov</span></span>
-<span><span class="va">match_cov</span></span>
-<span><span class="co">#&gt; [1] "AGE"   "SEX"   "SMOKE" "ECOG0"</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">target_pop</span><span class="op">)</span></span>
-<span><span class="co">#&gt;  [1] "N"          "age.mean"   "age.sd"     "N.male"     "prop.male" </span></span>
-<span><span class="co">#&gt;  [6] "N.ecog0"    "prop.ecog0" "N.smoke"    "prop.smoke" "ARM"</span></span>
+<span><span class="co"># Renames target population cols to be consistent with intervention_input</span></span>
 <span><span class="va">target_pop_standard</span> <span class="op">&lt;-</span> <span class="va">target_pop</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="co">#EDIT</span></span>
 <span>   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html" class="external-link">rename</a></span><span class="op">(</span>N<span class="op">=</span><span class="va">N</span>,</span>
@@ -352,11 +347,12 @@ data (<tt>intervention_input</tt>).</p>
 <span>          SMOKE<span class="op">=</span><span class="va">prop.smoke</span>,</span>
 <span>          ECOG0<span class="op">=</span><span class="va">prop.ecog0</span></span>
 <span>  <span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">transmute</a></span><span class="op">(</span><span class="va">N</span>, <span class="va">Treatment</span>, <span class="va">AGE</span>, <span class="va">SEX</span>, <span class="va">SMOKE</span>, <span class="va">ECOG0</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>AGE_SQUARED <span class="op">=</span> <span class="va">AGE</span><span class="op">^</span><span class="fl">2</span> <span class="op">+</span> <span class="va">age.sd</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">N</span>, <span class="va">Treatment</span>, <span class="va">AGE</span>, <span class="va">AGE_SQUARED</span>, <span class="va">SEX</span>, <span class="va">SMOKE</span>, <span class="va">ECOG0</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">target_pop_standard</span></span>
-<span><span class="co">#&gt;     N  Treatment      AGE  SEX     SMOKE ECOG0</span></span>
-<span><span class="co">#&gt; 1 300 Comparator 50.06333 0.49 0.1933333  0.35</span></span></code></pre></div>
+<span><span class="co">#&gt;     N  Treatment      AGE AGE_SQUARED  SEX     SMOKE ECOG0</span></span>
+<span><span class="co">#&gt; 1 300 Comparator 50.06333    2516.805 0.49 0.1933333  0.35</span></span></code></pre></div>
 </div>
 </div>
 </div>
@@ -391,7 +387,7 @@ of <span class="math inline">\(Q(\beta)\)</span>.</p>
 <p>In order to facilitate estimation of patient weights, <span class="math inline">\(\hat{\omega}_i\)</span>, it is necessary to center
 the baseline characteristics of the intervention data using the mean
 baseline characteristics from the comparator data.</p>
-<p>As described by Phillippo, balancing on both mean and standard
+<p>As described by Phillippo et al., balancing on both mean and standard
 deviation for continuous variables (where possible) may be considered in
 some cases. This is included in the example below.<span class="citation">[2]</span></p>
 <p>The code below also specifies an object (<tt>cent_match_cov</tt>)
@@ -400,40 +396,28 @@ be needed for the analyses below.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#### center baseline characteristics</span></span>
 <span><span class="co"># (subtract the aggregate comparator data from the corresponding column of intervention PLD)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">intervention_input</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "USUBJID"  "ARM"      "AGE"      "SEX"      "SMOKE"    "ECOG0"    "response"</span></span>
-<span><span class="co">#&gt; [8] "Time"     "Event"</span></span>
-<span></span>
-<span><span class="va">intervention_data</span> <span class="op">&lt;-</span> <span class="va">intervention_input</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>         <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>Age_centered <span class="op">=</span> <span class="va">AGE</span> <span class="op">-</span> <span class="va">target_pop</span><span class="op">$</span><span class="va">age.mean</span>,</span>
-<span>                <span class="co"># matching on both mean and standard deviation for continuous variable (optional)</span></span>
-<span>                Age_squared_centered <span class="op">=</span> <span class="op">(</span><span class="va">AGE</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span> <span class="op">-</span> <span class="op">(</span><span class="va">target_pop</span><span class="op">$</span><span class="va">age.mean</span><span class="op">^</span><span class="fl">2</span> <span class="op">+</span> <span class="va">target_pop</span><span class="op">$</span><span class="va">age.sd</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span>,</span>
-<span>                Sex_centered <span class="op">=</span> <span class="va">SEX</span> <span class="op">-</span> <span class="va">target_pop</span><span class="op">$</span><span class="va">prop.male</span>,</span>
-<span>                Smoke_centered <span class="op">=</span> <span class="va">SMOKE</span> <span class="op">-</span> <span class="va">target_pop</span><span class="op">$</span><span class="va">prop.smoke</span>,</span>
-<span>                ECOG0_centered <span class="op">=</span> <span class="va">ECOG0</span> <span class="op">-</span> <span class="va">target_pop</span><span class="op">$</span><span class="va">prop.ecog0</span><span class="op">)</span></span>
-<span></span>
+<span><span class="va">intervention_data</span> <span class="op">&lt;-</span> <span class="va">intervention_input</span></span>
+<span><span class="kw">for</span><span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="va">match_cov</span><span class="op">)</span><span class="op">{</span></span>
+<span>  <span class="va">intervention_data</span><span class="op">[[</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">i</span>, <span class="st">"_centered"</span><span class="op">)</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">intervention_input</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span> <span class="op">-</span> <span class="va">target_pop_standard</span><span class="op">[</span>,<span class="va">i</span><span class="op">]</span></span>
+<span><span class="op">}</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">intervention_data</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   USUBJID ARM AGE SEX SMOKE ECOG0 response     Time Event Age_centered</span></span>
-<span><span class="co">#&gt; 1       1   A  45   1     0     0        0 281.5195     0    -5.063333</span></span>
-<span><span class="co">#&gt; 2       2   A  71   1     0     0        1 500.0000     0    20.936667</span></span>
-<span><span class="co">#&gt; 3       3   A  58   1     1     1        1 304.6406     0     7.936667</span></span>
-<span><span class="co">#&gt; 4       4   A  48   0     0     1        1 102.4731     0    -2.063333</span></span>
-<span><span class="co">#&gt; 5       5   A  69   1     0     1        0 101.6632     0    18.936667</span></span>
-<span><span class="co">#&gt; 6       6   A  48   0     0     1        0 237.0593     1    -2.063333</span></span>
-<span><span class="co">#&gt;   Age_squared_centered Sex_centered Smoke_centered ECOG0_centered</span></span>
-<span><span class="co">#&gt; 1            -491.8049         0.51     -0.1933333          -0.35</span></span>
-<span><span class="co">#&gt; 2            2524.1951         0.51     -0.1933333          -0.35</span></span>
-<span><span class="co">#&gt; 3             847.1951         0.51      0.8066667           0.65</span></span>
-<span><span class="co">#&gt; 4            -212.8049        -0.49     -0.1933333           0.65</span></span>
-<span><span class="co">#&gt; 5            2244.1951         0.51     -0.1933333           0.65</span></span>
-<span><span class="co">#&gt; 6            -212.8049        -0.49     -0.1933333           0.65</span></span>
+<span><span class="co">#&gt;   USUBJID ARM AGE SEX SMOKE ECOG0 response     Time Event AGE_SQUARED</span></span>
+<span><span class="co">#&gt; 1       1   A  45   1     0     0        0 281.5195     0        2025</span></span>
+<span><span class="co">#&gt; 2       2   A  71   1     0     0        1 500.0000     0        5041</span></span>
+<span><span class="co">#&gt; 3       3   A  58   1     1     1        1 304.6406     0        3364</span></span>
+<span><span class="co">#&gt; 4       4   A  48   0     0     1        1 102.4731     0        2304</span></span>
+<span><span class="co">#&gt; 5       5   A  69   1     0     1        0 101.6632     0        4761</span></span>
+<span><span class="co">#&gt; 6       6   A  48   0     0     1        0 237.0593     1        2304</span></span>
+<span><span class="co">#&gt;   AGE_centered AGE_SQUARED_centered SEX_centered SMOKE_centered ECOG0_centered</span></span>
+<span><span class="co">#&gt; 1    -5.063333            -491.8049         0.51     -0.1933333          -0.35</span></span>
+<span><span class="co">#&gt; 2    20.936667            2524.1951         0.51     -0.1933333          -0.35</span></span>
+<span><span class="co">#&gt; 3     7.936667             847.1951         0.51      0.8066667           0.65</span></span>
+<span><span class="co">#&gt; 4    -2.063333            -212.8049        -0.49     -0.1933333           0.65</span></span>
+<span><span class="co">#&gt; 5    18.936667            2244.1951         0.51     -0.1933333           0.65</span></span>
+<span><span class="co">#&gt; 6    -2.063333            -212.8049        -0.49     -0.1933333           0.65</span></span>
 <span></span>
 <span><span class="co"># Set matching covariates</span></span>
-<span><span class="va">cent_match_cov</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Age_centered"</span>,</span>
-<span>                    <span class="st">"Age_squared_centered"</span>,</span>
-<span>                    <span class="st">"Sex_centered"</span>,</span>
-<span>                    <span class="st">"Smoke_centered"</span>,</span>
-<span>                    <span class="st">"ECOG0_centered"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">cent_match_cov</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">match_cov</span>, <span class="st">"_centered"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="optimization-procedure">Optimization procedure<a class="anchor" aria-label="anchor" href="#optimization-procedure"></a>
@@ -451,33 +435,31 @@ variables</li>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">est_weights</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/estimate_weights.html">estimate_weights</a></span><span class="op">(</span>intervention_data <span class="op">=</span> <span class="va">intervention_data</span>,</span>
 <span>                                matching_vars <span class="op">=</span> <span class="va">cent_match_cov</span><span class="op">)</span></span>
-<span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">est_weights</span><span class="op">$</span><span class="va">analysis_data</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   USUBJID          ARM AGE SEX SMOKE ECOG0 response     Time Event Age_centered</span></span>
-<span><span class="co">#&gt; 1       1 Intervention  45   1     0     0        0 281.5195     0    -5.063333</span></span>
-<span><span class="co">#&gt; 2       2 Intervention  71   1     0     0        1 500.0000     0    20.936667</span></span>
-<span><span class="co">#&gt; 3       3 Intervention  58   1     1     1        1 304.6406     0     7.936667</span></span>
-<span><span class="co">#&gt; 4       4 Intervention  48   0     0     1        1 102.4731     0    -2.063333</span></span>
-<span><span class="co">#&gt; 5       5 Intervention  69   1     0     1        0 101.6632     0    18.936667</span></span>
-<span><span class="co">#&gt; 6       6 Intervention  48   0     0     1        0 237.0593     1    -2.063333</span></span>
-<span><span class="co">#&gt;   Age_squared_centered Sex_centered Smoke_centered ECOG0_centered           wt</span></span>
-<span><span class="co">#&gt; 1            -491.8049         0.51     -0.1933333          -0.35 1.301506e+00</span></span>
-<span><span class="co">#&gt; 2            2524.1951         0.51     -0.1933333          -0.35 7.024764e-08</span></span>
-<span><span class="co">#&gt; 3             847.1951         0.51      0.8066667           0.65 6.384284e-02</span></span>
-<span><span class="co">#&gt; 4            -212.8049        -0.49     -0.1933333           0.65 1.204094e+00</span></span>
-<span><span class="co">#&gt; 5            2244.1951         0.51     -0.1933333           0.65 1.371621e-06</span></span>
-<span><span class="co">#&gt; 6            -212.8049        -0.49     -0.1933333           0.65 1.204094e+00</span></span>
-<span><span class="co">#&gt;          wt_rs</span></span>
-<span><span class="co">#&gt; 1 3.457953e+00</span></span>
-<span><span class="co">#&gt; 2 1.866400e-07</span></span>
-<span><span class="co">#&gt; 3 1.696231e-01</span></span>
-<span><span class="co">#&gt; 4 3.199141e+00</span></span>
-<span><span class="co">#&gt; 5 3.644239e-06</span></span>
-<span><span class="co">#&gt; 6 3.199141e+00</span></span>
-<span></span>
+<span><span class="co">#&gt;   USUBJID          ARM AGE SEX SMOKE ECOG0 response     Time Event AGE_SQUARED</span></span>
+<span><span class="co">#&gt; 1       1 Intervention  45   1     0     0        0 281.5195     0        2025</span></span>
+<span><span class="co">#&gt; 2       2 Intervention  71   1     0     0        1 500.0000     0        5041</span></span>
+<span><span class="co">#&gt; 3       3 Intervention  58   1     1     1        1 304.6406     0        3364</span></span>
+<span><span class="co">#&gt; 4       4 Intervention  48   0     0     1        1 102.4731     0        2304</span></span>
+<span><span class="co">#&gt; 5       5 Intervention  69   1     0     1        0 101.6632     0        4761</span></span>
+<span><span class="co">#&gt; 6       6 Intervention  48   0     0     1        0 237.0593     1        2304</span></span>
+<span><span class="co">#&gt;   AGE_centered AGE_SQUARED_centered SEX_centered SMOKE_centered ECOG0_centered</span></span>
+<span><span class="co">#&gt; 1    -5.063333            -491.8049         0.51     -0.1933333          -0.35</span></span>
+<span><span class="co">#&gt; 2    20.936667            2524.1951         0.51     -0.1933333          -0.35</span></span>
+<span><span class="co">#&gt; 3     7.936667             847.1951         0.51      0.8066667           0.65</span></span>
+<span><span class="co">#&gt; 4    -2.063333            -212.8049        -0.49     -0.1933333           0.65</span></span>
+<span><span class="co">#&gt; 5    18.936667            2244.1951         0.51     -0.1933333           0.65</span></span>
+<span><span class="co">#&gt; 6    -2.063333            -212.8049        -0.49     -0.1933333           0.65</span></span>
+<span><span class="co">#&gt;             wt        wt_rs</span></span>
+<span><span class="co">#&gt; 1 1.301506e+00 3.457953e+00</span></span>
+<span><span class="co">#&gt; 2 7.024764e-08 1.866400e-07</span></span>
+<span><span class="co">#&gt; 3 6.384284e-02 1.696231e-01</span></span>
+<span><span class="co">#&gt; 4 1.204094e+00 3.199141e+00</span></span>
+<span><span class="co">#&gt; 5 1.371621e-06 3.644239e-06</span></span>
+<span><span class="co">#&gt; 6 1.204094e+00 3.199141e+00</span></span>
 <span><span class="va">est_weights</span><span class="op">$</span><span class="va">matching_vars</span></span>
-<span><span class="co">#&gt; [1] "Age_centered"         "Age_squared_centered" "Sex_centered"        </span></span>
-<span><span class="co">#&gt; [4] "Smoke_centered"       "ECOG0_centered"</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] "AGE_centered"         "AGE_SQUARED_centered" "SEX_centered"        </span></span>
+<span><span class="co">#&gt; [4] "SMOKE_centered"       "ECOG0_centered"</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="weight-diagnostics">Weight diagnostics<a class="anchor" aria-label="anchor" href="#weight-diagnostics"></a>
@@ -495,7 +477,7 @@ weights derived are sensible.</p>
 number of independent non-weighted individuals that would be required to
 give an estimate with the same precision as the weighted sample
 estimate. The approximate effective sample size is calculated as: <span class="math display">\[ ESS =  \frac{({ \sum_{i=1}^n
-\hat{\omega}_i })^2}{ \sum_{i=1}^n \hat{\omega^2}_i  } \]</span> A small
+\hat{\omega}_i })^2}{ \sum_{i=1}^n \hat{\omega}_i^2} \]</span> A small
 ESS, relative to the original sample size, is an indication that the
 weights are highly variable and that the estimate may be unstable. This
 often occurs if there is very limited overlap in the distribution of the
@@ -528,7 +510,7 @@ rescaled weight <span class="math inline">\(&lt;\)</span> 1 means that
 an individual carries less weight in the re-weighted population than the
 original data. The rescaled weights are calculated as:</p>
 <p><span class="math display">\[\tilde{\omega}_i  =  \frac{  \hat{\omega}_i}{
-\sum_{i=1}^n \hat{\omega}_i }.N \]</span></p>
+\sum_{i=1}^n \hat{\omega}_i }\times N \]</span></p>
 <p>A histogram of the rescaled weights (along with a histogram of the
 weights) can be produced using the <tt>hist_wts</tt> function in the
 <tt>MAIC</tt> package. <tt>bin_width</tt> needs to be adapted depending
@@ -563,13 +545,13 @@ or less influence on the weighted analyses.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">wts_profile</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/profile_wts.html">profile_wts</a></span><span class="op">(</span><span class="va">est_weights</span><span class="op">$</span><span class="va">analysis_data</span>, vars <span class="op">=</span> <span class="va">match_cov</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">wts_profile</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   AGE SEX SMOKE ECOG0           wt        wt_rs</span></span>
-<span><span class="co">#&gt; 1  45   1     0     0 1.301506e+00 3.457953e+00</span></span>
-<span><span class="co">#&gt; 2  71   1     0     0 7.024764e-08 1.866400e-07</span></span>
-<span><span class="co">#&gt; 3  58   1     1     1 6.384284e-02 1.696231e-01</span></span>
-<span><span class="co">#&gt; 4  48   0     0     1 1.204094e+00 3.199141e+00</span></span>
-<span><span class="co">#&gt; 5  69   1     0     1 1.371621e-06 3.644239e-06</span></span>
-<span><span class="co">#&gt; 6  47   1     1     0 1.010290e+00 2.684226e+00</span></span></code></pre></div>
+<span><span class="co">#&gt;   AGE AGE_SQUARED SEX SMOKE ECOG0           wt        wt_rs</span></span>
+<span><span class="co">#&gt; 1  45        2025   1     0     0 1.301506e+00 3.457953e+00</span></span>
+<span><span class="co">#&gt; 2  71        5041   1     0     0 7.024764e-08 1.866400e-07</span></span>
+<span><span class="co">#&gt; 3  58        3364   1     1     1 6.384284e-02 1.696231e-01</span></span>
+<span><span class="co">#&gt; 4  48        2304   0     0     1 1.204094e+00 3.199141e+00</span></span>
+<span><span class="co">#&gt; 5  69        4761   1     0     1 1.371621e-06 3.644239e-06</span></span>
+<span><span class="co">#&gt; 6  47        2209   1     1     0 1.010290e+00 2.684226e+00</span></span></code></pre></div>
 </div>
 <div class="section level5">
 <h5 id="overall-weight-diagnostics-summary-function">Overall weight diagnostics summary function<a class="anchor" aria-label="anchor" href="#overall-weight-diagnostics-summary-function"></a>
@@ -589,73 +571,33 @@ three functions:</p>
 <span></span>
 <span><span class="va">diagnostics</span><span class="op">$</span><span class="va">ESS</span></span>
 <span><span class="co">#&gt; [1] 157.0715</span></span>
-<span></span>
 <span><span class="va">diagnostics</span><span class="op">$</span><span class="va">Summary_of_weights</span></span>
 <span><span class="co">#&gt;               type      mean       sd     median          min      max</span></span>
 <span><span class="co">#&gt; 1          Weights 0.3763805 0.556692 0.03467630 1.855194e-11 2.373310</span></span>
 <span><span class="co">#&gt; 2 Rescaled weights 1.0000000 1.479067 0.09213098 4.929037e-11 6.305614</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">diagnostics</span><span class="op">$</span><span class="va">Weight_profiles</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   AGE SEX SMOKE ECOG0           wt        wt_rs</span></span>
-<span><span class="co">#&gt; 1  45   1     0     0 1.301506e+00 3.457953e+00</span></span>
-<span><span class="co">#&gt; 2  71   1     0     0 7.024764e-08 1.866400e-07</span></span>
-<span><span class="co">#&gt; 3  58   1     1     1 6.384284e-02 1.696231e-01</span></span>
-<span><span class="co">#&gt; 4  48   0     0     1 1.204094e+00 3.199141e+00</span></span>
-<span><span class="co">#&gt; 5  69   1     0     1 1.371621e-06 3.644239e-06</span></span>
-<span><span class="co">#&gt; 6  47   1     1     0 1.010290e+00 2.684226e+00</span></span></code></pre></div>
+<span><span class="co">#&gt;   AGE AGE_SQUARED SEX SMOKE ECOG0           wt        wt_rs</span></span>
+<span><span class="co">#&gt; 1  45        2025   1     0     0 1.301506e+00 3.457953e+00</span></span>
+<span><span class="co">#&gt; 2  71        5041   1     0     0 7.024764e-08 1.866400e-07</span></span>
+<span><span class="co">#&gt; 3  58        3364   1     1     1 6.384284e-02 1.696231e-01</span></span>
+<span><span class="co">#&gt; 4  48        2304   0     0     1 1.204094e+00 3.199141e+00</span></span>
+<span><span class="co">#&gt; 5  69        4761   1     0     1 1.371621e-06 3.644239e-06</span></span>
+<span><span class="co">#&gt; 6  47        2209   1     1     0 1.010290e+00 2.684226e+00</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level4">
 <h4 id="has-the-optimization-worked">Has the optimization worked?<a class="anchor" aria-label="anchor" href="#has-the-optimization-worked"></a>
 </h4>
-<p>The following code checks whether the re-weighted baseline
+<p>The following function checks whether the re-weighted baseline
 characteristics for the intervention-treated patients match those
 aggregate characteristics from the comparator trial and outputs a
 summary that can be used for reporting.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Create an object to hold the output</span></span>
-<span><span class="va">baseline_summary</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">'Intervention'</span> <span class="op">=</span> <span class="cn">NA</span>, </span>
-<span>                         <span class="st">'Intervention_weighted'</span> <span class="op">=</span> <span class="cn">NA</span>, </span>
-<span>                         <span class="st">'Comparator'</span> <span class="op">=</span> <span class="cn">NA</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Summarise matching variables for weighted intervention data</span></span>
-<span><span class="va">baseline_summary</span><span class="op">$</span><span class="va">Intervention_weighted</span> <span class="op">&lt;-</span> <span class="va">est_weights</span><span class="op">$</span><span class="va">analysis_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">transmute</a></span><span class="op">(</span><span class="va">AGE</span>, <span class="va">SEX</span>, <span class="va">SMOKE</span>, <span class="va">ECOG0</span>, <span class="va">wt</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise_all.html" class="external-link">summarise_at</a></span><span class="op">(</span><span class="va">match_cov</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/stats/weighted.mean.html" class="external-link">weighted.mean</a></span><span class="op">(</span><span class="va">.</span>, <span class="va">wt</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Summarise matching variables for unweighted intervention data</span></span>
-<span><span class="va">baseline_summary</span><span class="op">$</span><span class="va">Intervention</span> <span class="op">&lt;-</span> <span class="va">est_weights</span><span class="op">$</span><span class="va">analysis_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">transmute</a></span><span class="op">(</span><span class="va">AGE</span>, <span class="va">SEX</span>, <span class="va">SMOKE</span>, <span class="va">ECOG0</span>, <span class="va">wt</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise_all.html" class="external-link">summarise_at</a></span><span class="op">(</span><span class="va">match_cov</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">.</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># baseline data for the comparator study</span></span>
-<span><span class="va">baseline_summary</span><span class="op">$</span><span class="va">Comparator</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">transmute</a></span><span class="op">(</span><span class="va">target_pop_standard</span>, <span class="va">AGE</span>, <span class="va">SEX</span>, <span class="va">SMOKE</span>, <span class="va">ECOG0</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Combine the three summaries</span></span>
-<span><span class="co"># Takes a list of data frames and binds these together</span></span>
-<span><span class="va">trt</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">baseline_summary</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">baseline_summary</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind.html" class="external-link">bind_rows</a></span><span class="op">(</span><span class="va">baseline_summary</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate_all.html" class="external-link">transmute_all</a></span><span class="op">(</span><span class="va">sprintf</span>, fmt <span class="op">=</span> <span class="st">"%.2f"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="co">#apply rounding for presentation</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">transmute</a></span><span class="op">(</span>ARM <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">trt</span><span class="op">)</span>, <span class="va">AGE</span>, <span class="va">SEX</span>, <span class="va">SMOKE</span>, <span class="va">ECOG0</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Insert N of intervention  as number of patients</span></span>
-<span><span class="va">baseline_summary</span><span class="op">$</span><span class="va">`N/ESS`</span><span class="op">[</span><span class="va">baseline_summary</span><span class="op">$</span><span class="va">ARM</span> <span class="op">==</span> <span class="st">"Intervention"</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">est_weights</span><span class="op">$</span><span class="va">analysis_data</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Insert N for comparator from target_pop_standard</span></span>
-<span><span class="va">baseline_summary</span><span class="op">$</span><span class="va">`N/ESS`</span><span class="op">[</span><span class="va">baseline_summary</span><span class="op">$</span><span class="va">ARM</span> <span class="op">==</span> <span class="st">"Comparator"</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">target_pop_standard</span><span class="op">$</span><span class="va">N</span></span>
-<span></span>
-<span><span class="co"># Insert the ESS as the sample size for the weighted data</span></span>
-<span><span class="co"># This is calculated above but can also be obtained using the estimate_ess function as shown below</span></span>
-<span><span class="va">baseline_summary</span><span class="op">$</span><span class="va">`N/ESS`</span><span class="op">[</span><span class="va">baseline_summary</span><span class="op">$</span><span class="va">ARM</span> <span class="op">==</span> <span class="st">"Intervention_weighted"</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">est_weights</span><span class="op">$</span><span class="va">analysis_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="../reference/estimate_ess.html">estimate_ess</a></span><span class="op">(</span>wt_col <span class="op">=</span> <span class="st">'wt'</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">baseline_summary</span> <span class="op">&lt;-</span> <span class="va">baseline_summary</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">transmute</a></span><span class="op">(</span><span class="va">ARM</span>, `N/ESS`<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">`N/ESS`</span>,<span class="fl">1</span><span class="op">)</span>, <span class="va">AGE</span>, <span class="va">SEX</span>, <span class="va">SMOKE</span>, <span class="va">ECOG0</span><span class="op">)</span></span>
-<span><span class="va">baseline_summary</span></span>
-<span><span class="co">#&gt;                     ARM N/ESS   AGE  SEX SMOKE ECOG0</span></span>
-<span><span class="co">#&gt; 1          Intervention 500.0 59.85 0.38  0.32  0.41</span></span>
-<span><span class="co">#&gt; 2 Intervention_weighted 157.1 50.06 0.49  0.19  0.35</span></span>
-<span><span class="co">#&gt; 3            Comparator 300.0 50.06 0.49  0.19  0.35</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/check_weights.html">check_weights</a></span><span class="op">(</span><span class="va">est_weights</span><span class="op">$</span><span class="va">analysis_data</span>, <span class="va">match_cov</span>, <span class="va">target_pop_standard</span><span class="op">)</span></span>
+<span><span class="co">#&gt;                     ARM ESS      AGE AGE_SQUARED       SEX     SMOKE     ECOG0</span></span>
+<span><span class="co">#&gt; 1          Intervention 500 59.84600    3662.578 0.3840000 0.3200000 0.4060000</span></span>
+<span><span class="co">#&gt; 2 Intervention_weighted 157 50.06334    2516.805 0.4899999 0.1933335 0.3500003</span></span>
+<span><span class="co">#&gt; 3            Comparator 300 50.06333    2516.805 0.4900000 0.1933333 0.3500000</span></span></code></pre></div>
 </div>
 </div>
 </div>
@@ -672,7 +614,9 @@ weight of 1 for use in the weighted analysis.</p>
 <p>Pseudo overall survival data was obtained for the comparator
 treatment by digitizing a reported overall survival Kaplan-Meier graph
 using the methodology of Guyot et al.<span class="citation">[4]</span>
-It is common for binary endpoints to be reported as a percentage of
+Recently, Liu et al introduced an R package <tt>IPDfromKM</tt> that
+facilitates these methodologies.<span class="citation">[5]</span></p>
+<p>It is common for binary endpoints to be reported as a percentage of
 patients with the event and therefore the example code below simulates
 pseudo-data for objective response based on the total number of patients
 and the proportion of responders.</p>
@@ -740,7 +684,7 @@ the analysis.</p>
 <h4 id="bootstrapping-a-confidence-interval">Bootstrapping a confidence interval<a class="anchor" aria-label="anchor" href="#bootstrapping-a-confidence-interval"></a>
 </h4>
 <p>The use of weights induces a within-subject correlation in outcomes,
-as observations can have weights that are unequal to one another <span class="citation">[5,6]</span>. As such, it is necessary to use a
+as observations can have weights that are unequal to one another <span class="citation">[6,7]</span>. As such, it is necessary to use a
 variance estimator to take into account the lack of independence of
 observations. The two common approaches to this are robust variance
 estimation and bootstrapping. A simulation study was conducted by Austin
@@ -772,7 +716,7 @@ when applied to data returns a vector containing the statistic(s) of
 interest. The <tt>bootstrap_HR</tt> and <tt>bootstrap_OR</tt> in the
 <tt>MAIC</tt> package can be used for this purpose.</p>
 <p>Two different methods for estimating a 95% confidence interval (CI)
-from the bootstrap samples were explored:<span class="citation">[7–9]</span></p>
+from the bootstrap samples were explored:<span class="citation">[8–10]</span></p>
 <ul>
 <li>Percentile CIs
 <ul>
@@ -942,7 +886,7 @@ comparator treatment.</p>
 <span>  <span class="fu"><a href="https://davidgohel.github.io/flextable/reference/autofit.html" class="external-link">autofit</a></span><span class="op">(</span>add_w <span class="op">=</span> <span class="fl">0.2</span>, add_h <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">HR_table</span></span></code></pre></div>
-<template id="28619796-9f7e-4258-aaff-cb517377a46c"><style>
+<template id="39cc047f-bd07-45d6-8e9e-46dfb7892829"><style>
 .tabwid table{
   border-spacing:0px !important;
   border-collapse:collapse;
@@ -982,35 +926,35 @@ background-color: transparent;
 }
 </style>
 <div class="tabwid">
-<style>.cl-2935b142{}.cl-29174234{font-family:'Arial';font-size:14pt;font-weight:bold;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-29174266{font-family:'Arial';font-size:14pt;font-weight:normal;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-2923c8c4{margin:0;text-align:left;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-2923c8e2{margin:0;text-align:center;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-292417f2{width:3.962in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 1pt solid rgba(0, 0, 0, 1.00);border-left: 1pt solid rgba(0, 0, 0, 1.00);border-right: 1pt solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-2924181a{width:2.33in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 1pt solid rgba(0, 0, 0, 1.00);border-left: 1pt solid rgba(0, 0, 0, 1.00);border-right: 1pt solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-29241824{width:3.962in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 1pt solid rgba(0, 0, 0, 1.00);border-right: 1pt solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-29241838{width:2.33in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 1pt solid rgba(0, 0, 0, 1.00);border-right: 1pt solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}</style>
-<table class="table cl-2935b142">
+<style>.cl-6c3c15fa{}.cl-6c312bea{font-family:'Arial';font-size:14pt;font-weight:bold;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-6c312bf4{font-family:'Arial';font-size:14pt;font-weight:normal;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-6c36cbea{margin:0;text-align:left;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-6c36cbfe{margin:0;text-align:center;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-6c36e1b6{width:3.962in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 1pt solid rgba(0, 0, 0, 1.00);border-left: 1pt solid rgba(0, 0, 0, 1.00);border-right: 1pt solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-6c36e1c0{width:2.33in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 1pt solid rgba(0, 0, 0, 1.00);border-left: 1pt solid rgba(0, 0, 0, 1.00);border-right: 1pt solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-6c36e1c1{width:3.962in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 1pt solid rgba(0, 0, 0, 1.00);border-right: 1pt solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-6c36e1ca{width:2.33in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 1pt solid rgba(0, 0, 0, 1.00);border-right: 1pt solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}</style>
+<table class="table cl-6c3c15fa">
 <thead><tr style="overflow-wrap:break-word;">
-<th class="cl-292417f2"><p class="cl-2923c8c4"><span class="cl-29174234">Method</span></p></th>
-<th class="cl-2924181a"><p class="cl-2923c8e2"><span class="cl-29174234">Hazard ratio (95% CI)</span></p></th>
+<th class="cl-6c36e1b6"><p class="cl-6c36cbea"><span class="cl-6c312bea">Method</span></p></th>
+<th class="cl-6c36e1c0"><p class="cl-6c36cbfe"><span class="cl-6c312bea">Hazard ratio (95% CI)</span></p></th>
 </tr></thead>
 <tbody>
 <tr style="overflow-wrap:break-word;">
-<td class="cl-29241824"><p class="cl-2923c8c4"><span class="cl-29174266">HR (95% CI) from unadjusted Cox model</span></p></td>
-<td class="cl-29241838"><p class="cl-2923c8e2"><span class="cl-29174266">0.375 (0.304 to 0.462)</span></p></td>
+<td class="cl-6c36e1c1"><p class="cl-6c36cbea"><span class="cl-6c312bf4">HR (95% CI) from unadjusted Cox model</span></p></td>
+<td class="cl-6c36e1ca"><p class="cl-6c36cbfe"><span class="cl-6c312bf4">0.375 (0.304 to 0.462)</span></p></td>
 </tr>
 <tr style="overflow-wrap:break-word;">
-<td class="cl-292417f2"><p class="cl-2923c8c4"><span class="cl-29174266">HR (95% CI) from weighted Cox model</span></p></td>
-<td class="cl-2924181a"><p class="cl-2923c8e2"><span class="cl-29174266">0.286 (0.207 to 0.396)</span></p></td>
+<td class="cl-6c36e1b6"><p class="cl-6c36cbea"><span class="cl-6c312bf4">HR (95% CI) from weighted Cox model</span></p></td>
+<td class="cl-6c36e1c0"><p class="cl-6c36cbfe"><span class="cl-6c312bf4">0.286 (0.207 to 0.396)</span></p></td>
 </tr>
 <tr style="overflow-wrap:break-word;">
-<td class="cl-292417f2"><p class="cl-2923c8c4"><span class="cl-29174266">Bootstrap median HR (95% percentile CI)</span></p></td>
-<td class="cl-2924181a"><p class="cl-2923c8e2"><span class="cl-29174266">0.289 (0.218 to 0.369)</span></p></td>
+<td class="cl-6c36e1b6"><p class="cl-6c36cbea"><span class="cl-6c312bf4">Bootstrap median HR (95% percentile CI)</span></p></td>
+<td class="cl-6c36e1c0"><p class="cl-6c36cbfe"><span class="cl-6c312bf4">0.289 (0.218 to 0.369)</span></p></td>
 </tr>
 <tr style="overflow-wrap:break-word;">
-<td class="cl-292417f2"><p class="cl-2923c8c4"><span class="cl-29174266">Bootstrap median HR (95% BCa CI)</span></p></td>
-<td class="cl-2924181a"><p class="cl-2923c8e2"><span class="cl-29174266">0.289 (0.215 to 0.367)</span></p></td>
+<td class="cl-6c36e1b6"><p class="cl-6c36cbea"><span class="cl-6c312bf4">Bootstrap median HR (95% BCa CI)</span></p></td>
+<td class="cl-6c36e1c0"><p class="cl-6c36cbfe"><span class="cl-6c312bf4">0.289 (0.215 to 0.367)</span></p></td>
 </tr>
 </tbody>
 </table>
-</div></template><div class="flextable-shadow-host" id="20099b77-ddf8-42ec-aafc-bd3116deaab6"></div>
+</div></template><div class="flextable-shadow-host" id="d8fb2f4b-8bc1-4eee-b9f3-63d22d2111a2"></div>
 <script>
-var dest = document.getElementById("20099b77-ddf8-42ec-aafc-bd3116deaab6");
-var template = document.getElementById("28619796-9f7e-4258-aaff-cb517377a46c");
+var dest = document.getElementById("d8fb2f4b-8bc1-4eee-b9f3-63d22d2111a2");
+var template = document.getElementById("39cc047f-bd07-45d6-8e9e-46dfb7892829");
 var fantome = dest.attachShadow({mode: 'open'});
 var templateContent = template.content;
 fantome.appendChild(templateContent);
@@ -1148,7 +1092,7 @@ values are no longer a integer value.</p>
 <span>  <span class="fu"><a href="https://davidgohel.github.io/flextable/reference/border_inner_v.html" class="external-link">border_inner_v</a></span><span class="op">(</span>border <span class="op">=</span> <span class="fu"><a href="https://davidgohel.github.io/officer/reference/fp_border.html" class="external-link">fp_border</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://davidgohel.github.io/flextable/reference/autofit.html" class="external-link">autofit</a></span><span class="op">(</span>add_w <span class="op">=</span> <span class="fl">0.2</span><span class="op">)</span></span>
 <span><span class="va">OR_table</span></span></code></pre></div>
-<template id="416f13f8-5d68-44e5-bed6-952b528911ce"><style>
+<template id="6654ef6c-2994-4f2a-9710-67b92f32579a"><style>
 .tabwid table{
   border-spacing:0px !important;
   border-collapse:collapse;
@@ -1188,35 +1132,35 @@ background-color: transparent;
 }
 </style>
 <div class="tabwid">
-<style>.cl-3896c1e4{}.cl-3887a0c4{font-family:'Arial';font-size:14pt;font-weight:bold;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-3887a0d8{font-family:'Arial';font-size:14pt;font-weight:normal;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-388d6202{margin:0;text-align:left;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-388d620c{margin:0;text-align:center;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-388d8246{width:5.14in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 1pt solid rgba(0, 0, 0, 1.00);border-left: 1pt solid rgba(0, 0, 0, 1.00);border-right: 1pt solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-388d8250{width:2.299in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 1pt solid rgba(0, 0, 0, 1.00);border-left: 1pt solid rgba(0, 0, 0, 1.00);border-right: 1pt solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-388d825a{width:5.14in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 1pt solid rgba(0, 0, 0, 1.00);border-right: 1pt solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-388d825b{width:2.299in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 1pt solid rgba(0, 0, 0, 1.00);border-right: 1pt solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-388d8264{width:5.14in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 1pt solid rgba(0, 0, 0, 1.00);border-left: 1pt solid rgba(0, 0, 0, 1.00);border-right: 1pt solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-388d8265{width:2.299in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 1pt solid rgba(0, 0, 0, 1.00);border-left: 1pt solid rgba(0, 0, 0, 1.00);border-right: 1pt solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}</style>
-<table class="table cl-3896c1e4">
+<style>.cl-754ce480{}.cl-754217bc{font-family:'Arial';font-size:14pt;font-weight:bold;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-754217c6{font-family:'Arial';font-size:14pt;font-weight:normal;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-75461204{margin:0;text-align:left;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-75461218{margin:0;text-align:center;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-7546285c{width:5.14in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 1pt solid rgba(0, 0, 0, 1.00);border-left: 1pt solid rgba(0, 0, 0, 1.00);border-right: 1pt solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-75462866{width:2.299in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 1pt solid rgba(0, 0, 0, 1.00);border-left: 1pt solid rgba(0, 0, 0, 1.00);border-right: 1pt solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-75462867{width:5.14in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 1pt solid rgba(0, 0, 0, 1.00);border-right: 1pt solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-75462870{width:2.299in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 1pt solid rgba(0, 0, 0, 1.00);border-right: 1pt solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-75462871{width:5.14in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 1pt solid rgba(0, 0, 0, 1.00);border-left: 1pt solid rgba(0, 0, 0, 1.00);border-right: 1pt solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-7546287a{width:2.299in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 1pt solid rgba(0, 0, 0, 1.00);border-left: 1pt solid rgba(0, 0, 0, 1.00);border-right: 1pt solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}</style>
+<table class="table cl-754ce480">
 <thead><tr style="overflow-wrap:break-word;">
-<th class="cl-388d8246"><p class="cl-388d6202"><span class="cl-3887a0c4">Method</span></p></th>
-<th class="cl-388d8250"><p class="cl-388d620c"><span class="cl-3887a0c4">Odds ratio (95% CI)</span></p></th>
+<th class="cl-7546285c"><p class="cl-75461204"><span class="cl-754217bc">Method</span></p></th>
+<th class="cl-75462866"><p class="cl-75461218"><span class="cl-754217bc">Odds ratio (95% CI)</span></p></th>
 </tr></thead>
 <tbody>
 <tr style="overflow-wrap:break-word;">
-<td class="cl-388d825a"><p class="cl-388d6202"><span class="cl-3887a0d8">OR (95% CI) from unadjusted logistic regression model</span></p></td>
-<td class="cl-388d825b"><p class="cl-388d620c"><span class="cl-3887a0d8">5.318 (3.888 to 7.275)</span></p></td>
+<td class="cl-75462867"><p class="cl-75461204"><span class="cl-754217c6">OR (95% CI) from unadjusted logistic regression model</span></p></td>
+<td class="cl-75462870"><p class="cl-75461218"><span class="cl-754217c6">5.318 (3.888 to 7.275)</span></p></td>
 </tr>
 <tr style="overflow-wrap:break-word;">
-<td class="cl-388d8264"><p class="cl-388d6202"><span class="cl-3887a0d8">OR (95% CI) from weighted logistic regression model</span></p></td>
-<td class="cl-388d8265"><p class="cl-388d620c"><span class="cl-3887a0d8">3.787 (2.558 to 5.605)</span></p></td>
+<td class="cl-75462871"><p class="cl-75461204"><span class="cl-754217c6">OR (95% CI) from weighted logistic regression model</span></p></td>
+<td class="cl-7546287a"><p class="cl-75461218"><span class="cl-754217c6">3.787 (2.558 to 5.605)</span></p></td>
 </tr>
 <tr style="overflow-wrap:break-word;">
-<td class="cl-388d8246"><p class="cl-388d6202"><span class="cl-3887a0d8">Bootstrap median HR (95% percentile CI)</span></p></td>
-<td class="cl-388d8250"><p class="cl-388d620c"><span class="cl-3887a0d8">3.784 (2.693 to 5.448)</span></p></td>
+<td class="cl-7546285c"><p class="cl-75461204"><span class="cl-754217c6">Bootstrap median HR (95% percentile CI)</span></p></td>
+<td class="cl-75462866"><p class="cl-75461218"><span class="cl-754217c6">3.784 (2.693 to 5.448)</span></p></td>
 </tr>
 <tr style="overflow-wrap:break-word;">
-<td class="cl-388d8246"><p class="cl-388d6202"><span class="cl-3887a0d8">Bootstrap median HR (95% BCa CI)</span></p></td>
-<td class="cl-388d8250"><p class="cl-388d620c"><span class="cl-3887a0d8">3.784 (2.669 to 5.402)</span></p></td>
+<td class="cl-7546285c"><p class="cl-75461204"><span class="cl-754217c6">Bootstrap median HR (95% BCa CI)</span></p></td>
+<td class="cl-75462866"><p class="cl-75461218"><span class="cl-754217c6">3.784 (2.669 to 5.402)</span></p></td>
 </tr>
 </tbody>
 </table>
-</div></template><div class="flextable-shadow-host" id="d419bb54-ad7b-4f87-a4ec-2ae0db33d8d6"></div>
+</div></template><div class="flextable-shadow-host" id="ef0ddf27-aa63-49b6-be7b-32867bc571e8"></div>
 <script>
-var dest = document.getElementById("d419bb54-ad7b-4f87-a4ec-2ae0db33d8d6");
-var template = document.getElementById("416f13f8-5d68-44e5-bed6-952b528911ce");
+var dest = document.getElementById("ef0ddf27-aa63-49b6-be7b-32867bc571e8");
+var template = document.getElementById("6654ef6c-2994-4f2a-9710-67b92f32579a");
 var fantome = dest.attachShadow({mode: 'open'});
 var templateContent = template.content;
 fantome.appendChild(templateContent);
@@ -1270,29 +1214,36 @@ secondary analysis of survival data: Reconstructing the data from
 published kaplan-meier survival curves. BMC Medical Research Methodology
 2012;12:9.</div>
 </div>
-<div id="ref-austin2016variance" class="csl-entry">
+<div id="ref-Liu2021" class="csl-entry">
 <div class="csl-left-margin">[5] </div>
+<div class="csl-right-inline">Liu
+N, Yanhong Z, Lee JJ. IPDfromKM: Reconstruct individual patient data
+from published kaplan-meier survival curves. BMC Medical Research
+Methodology 2021;21:111.</div>
+</div>
+<div id="ref-austin2016variance" class="csl-entry">
+<div class="csl-left-margin">[6] </div>
 <div class="csl-right-inline">Austin PC. Variance estimation when using
 inverse probability of treatment weighting (IPTW) with survival
 analysis. Statistics in Medicine 2016;35:5642–55.</div>
 </div>
 <div id="ref-therneau2015adjusted" class="csl-entry">
-<div class="csl-left-margin">[6] </div>
+<div class="csl-left-margin">[7] </div>
 <div class="csl-right-inline">Therneau TM, Crowson CS, Atkinson EJ. <a href="https://cran.r-project.org/web/packages/survival/vignettes/adjcurve.pdf" class="external-link">Adjusted
 survival curves</a>. 2015.</div>
 </div>
 <div id="ref-efron1994" class="csl-entry">
-<div class="csl-left-margin">[7] </div>
+<div class="csl-left-margin">[8] </div>
 <div class="csl-right-inline">Efron B, Tibshirani RJ. An introduction to the
 bootstrap. CRC press; 1994.</div>
 </div>
 <div id="ref-diciccio1996" class="csl-entry">
-<div class="csl-left-margin">[8] </div>
+<div class="csl-left-margin">[9] </div>
 <div class="csl-right-inline">DiCiccio TJ, Efron B. Bootstrap confidence
 intervals. Statistical Science 1996:189–212.</div>
 </div>
 <div id="ref-efron1987" class="csl-entry">
-<div class="csl-left-margin">[9] </div>
+<div class="csl-left-margin">[10] </div>
 <div class="csl-right-inline">Efron B. Better bootstrap confidence intervals.
 Journal of the American Statistical Association 1987;82:171–85.</div>
 </div>

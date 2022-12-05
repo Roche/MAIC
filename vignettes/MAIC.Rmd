@@ -405,7 +405,7 @@ the weighted analysis.
 
 Pseudo overall survival data was obtained for the comparator treatment by
 digitizing a reported overall survival Kaplan-Meier graph using the methodology
-of Guyot et al.[@guyot2012] Recently, Liu et al introduced an R package <tt>IPDfromKM</tt> that facilitates these methodologies.[@Liu2021]
+of Guyot et al. [@guyot2012] Recently, Liu et al. introduced an R package <tt>IPDfromKM</tt> that facilitates this method. [@Liu2021]
 
 It is common for binary endpoints to be reported as a percentage of patients with the event and therefore the example code below simulates pseudo-data for objective response based on the total number of patients and the proportion of responders.
 
@@ -462,22 +462,7 @@ relative effect to understand how the weighting has affected the
 analysis.
 
 ### Bootstrapping a confidence interval
-The use of weights induces a within-subject correlation in outcomes, as
-observations can have weights that are unequal to one another
-[@austin2016variance; @therneau2015adjusted]. As such, it is necessary to use a
-variance estimator to take into account the lack of independence of
-observations. The two common approaches to this are robust variance estimation
-and bootstrapping. A simulation study was conducted by Austin et al
-\cite{Austin2016} to examine the different methods in the context of an inverse
-probability of treatment weighting (IPTW) survival analysis. The author
-concluded that the use of a bootstrap estimator resulted in approximately
-correct estimates of standard errors and confidence intervals with the correct
-coverage rate. The other estimators resulted in biased estimates of standard
-errors and confidence intervals with incorrect coverage rates. The use of a
-bootstrap type estimator is also intuitively appealing, a robust estimator
-assumes that the weights are known and not subject to any sampling uncertainty.
-However, a bootstrap estimator allows for quantification of the uncertainty in
-the estimation of the weights. 
+The use of weights induces a within-subject correlation in outcomes, as observations can have weights that are unequal to one another. [@austin2016variance; @therneau2015adjusted] As such, it is necessary to use a variance estimator to take into account the lack of independence of observations. The two common approaches to this are robust variance estimation and bootstrapping. A simulation study was conducted by Austin et al to examine the different methods in the context of an inverse probability of treatment weighting (IPTW) survival analysis. [@austin2016variance] The author concluded that the use of a bootstrap estimator resulted in approximately correct estimates of standard errors and confidence intervals with the correct coverage rate. The other estimators resulted in biased estimates of standard errors and confidence intervals with incorrect coverage rates. The use of a bootstrap type estimator is also intuitively appealing, a robust estimator assumes that the weights are known and not subject to any sampling uncertainty. However, a bootstrap estimator allows for quantification of the uncertainty in the estimation of the weights. 
 
 Bootstrapping involves:
 
@@ -788,8 +773,7 @@ OR_table
 
 ### Bootstrapping diagnostics {#bsor}
 
-To test the distribution of the bootstrapped ORs, a histogram can be plotted. If
-the plot does not appear normally distributed, this may suggest that the BCa
+To test the distribution of the bootstrapped ORs, a histogram can be plotted. If the plot does not appear normally distributed, this may suggest that the BCa
 approach is more appropriate than the percentile approach.
 
 
