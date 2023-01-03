@@ -431,7 +431,7 @@ find_RR <- function(fit = NULL, logRR = NULL, logRR_SE = NULL, RR = "HR", CI.per
     HR_CI <- c(HR - qnorm(1 - (1-CI.perc)/2) * HR_SE, HR,
                HR + qnorm(1 - (1-CI.perc)/2) * HR_SE)
     
-    return(list(HR = HR, HR_SE = HR_SE, HR_CI = HR_CI, logHR = logHR, logHR_SE = logHR_SE))  
+    return(list(HR = HR, HR_SE = HR_SE, HR_CI = HR_CI, logHR = logRR, logHR_SE = logRR_SE))  
   } else if(RR == "OR"){
     
     OR <- exp(logRR)
@@ -439,7 +439,7 @@ find_RR <- function(fit = NULL, logRR = NULL, logRR_SE = NULL, RR = "HR", CI.per
     OR_CI <- c(OR - qnorm(1 - (1-CI.perc)/2) * OR_SE, OR,
                OR + qnorm(1 - (1-CI.perc)/2) * OR_SE)
     
-    return(list(OR = OR, OR_SE = OR_SE, OR_CI = OR_CI, logOR = logOR, logOR_SE = logOR_SE))  
+    return(list(OR = OR, OR_SE = OR_SE, OR_CI = OR_CI, logOR = logRR, logOR_SE = logRR_SE))  
   }
 }
 
