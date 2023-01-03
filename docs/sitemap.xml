@@ -22,6 +22,9 @@
     <loc>/reference/bootstrap_HR.html</loc>
   </url>
   <url>
+    <loc>/reference/bootstrap_HR_anchored.html</loc>
+  </url>
+  <url>
     <loc>/reference/bootstrap_OR.html</loc>
   </url>
   <url>
@@ -35,6 +38,15 @@
   </url>
   <url>
     <loc>/reference/est_weights.html</loc>
+  </url>
+  <url>
+    <loc>/reference/find_ITC.html</loc>
+  </url>
+  <url>
+    <loc>/reference/find_RR.html</loc>
+  </url>
+  <url>
+    <loc>/reference/find_SE_fromCI.html</loc>
   </url>
   <url>
     <loc>/reference/hist_wts.html</loc>

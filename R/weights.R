@@ -295,10 +295,9 @@ hist_wts <- function(data, wt_col="wt", rs_wt_col="wt_rs", bin = 30) {
 #'   associated with each weight value.
 #'
 #' @seealso \code{\link{estimate_weights}}
-#'
 #' @example inst/examples/MAIC_example_weight_diagnostics.R
-#'
 #' @export
+
 profile_wts <- function(data, wt_col="wt", wt_rs="wt_rs", vars){
   profile_data <-  data %>%
     dplyr::select(tidyselect::all_of(vars), tidyselect::all_of(wt_col), tidyselect::all_of(wt_rs))
@@ -341,10 +340,9 @@ profile_wts <- function(data, wt_col="wt", wt_rs="wt_rs", vars){
 #' }
 #'
 #' @seealso \code{\link{estimate_weights}}, \code{\link{estimate_ess}}, \code{\link{summarize_wts}}, \code{\link{profile_wts}}
-#'
 #' @example inst/examples/MAIC_example_weight_diagnostics.R
-#'
 #' @export
+
 wt_diagnostics <- function(data, wt_col="wt", wt_rs="wt_rs", vars){
 
   # ESS
@@ -374,6 +372,8 @@ wt_diagnostics <- function(data, wt_col="wt", wt_rs="wt_rs", vars){
 #'   using estimate_weights).
 #' @param match_covs A character vector giving the names of the covariates that were used to estimate weights 
 #' @param target_pop_standard aggregate characteristics of the comparator trial with the same naming as the analysis_data
+#' @example inst/examples/MAIC_example_weight_diagnostics.R
+#' @seealso \code{\link{estimate_weights}}
 #' @return Summary of patient characteristics before and after matching, including ESS and comparator trial aggregate summary
 #' @export
 
@@ -392,7 +392,131 @@ check_weights <- function(analysis_data = NULL, matching_vars = NULL,
   baseline_summary <- cbind(ARM, ESS, cov)
   
   return(baseline_summary)
+}
+
+#' Calculate relative risk with standard error and confidence interval from log relative risk (i.e. log hazard ratio or log odds ratio) of the fitted model
+#'
+#' Convenient function to calculate relative risk (RR) from log relative risk (logRR).
+#' Relative risk would be hazard ratio for the cox regression and odds ratio for the logistic regression.
+#' This function uses delta method to calculate the standard error and confidence interval for the RR.
+#'  
+#' @param fit Regression fit (i.e. cox regression or logistic regression) where the logRR can be extracted from
+#' @param logRR Instead of providing the fitted model (via parameter \code{fit}), one can specify logRR manually through this parameter
+#' @param logRR_SE If logRR is specified, standard error has to be provided.
+#' @param RR Specifies which type of relative risk is to be calculated. Options include "HR" for hazard ratio and "OR" for odds ratio.
+#' @param CI.perc Defines the percentage of confidence interval needed. 
+#' @return RR with standard error and confidence interval
+#' @export
+
+find_RR <- function(fit = NULL, logRR = NULL, logRR_SE = NULL, RR = "HR", CI.perc = 0.95){
   
+  if(!is.null(fit)){
+    if(RR == "HR"){
+      logRR <- coef(fit)
+      logRR_SE <- summary(fit)$coefficients[,"se(coef)"]
+    } else if(RR == "OR"){
+      logRR <- coef(fit)[-1] #exclude intercept
+      logRR_SE <- summary(fit)$coefficients[-1, "Std. Error"]
+    }
+  } else {
+    if(is.null(logRR) || is.null(logRR_SE)){
+      stop("If fitted model has not be specified, logRR and logRR_SE have to be specified")
+    }
+  }
+  
+  if(RR == "HR"){
+    
+    HR <- exp(logRR)
+    HR_SE <- logRR_SE * HR
+    HR_CI <- c(HR - qnorm(1 - (1-CI.perc)/2) * HR_SE, HR,
+               HR + qnorm(1 - (1-CI.perc)/2) * HR_SE)
+    
+    return(list(HR = HR, HR_SE = HR_SE, HR_CI = HR_CI, logHR = logHR, logHR_SE = logHR_SE))  
+  } else if(RR == "OR"){
+    
+    OR <- exp(logRR)
+    OR_SE <- logRR_SE * OR
+    OR_CI <- c(OR - qnorm(1 - (1-CI.perc)/2) * OR_SE, OR,
+               OR + qnorm(1 - (1-CI.perc)/2) * OR_SE)
+    
+    return(list(OR = OR, OR_SE = OR_SE, OR_CI = OR_CI, logOR = logOR, logOR_SE = logOR_SE))  
+  }
+}
+
+
+#' Calculate relative risk using indirect treatment comparison (i.e. consistency equation) for anchored comparison
+#'
+#' Convenient function to calculate relative risk using indirect treatment comparison.
+#' Function calculates treatment effect of C vs B via subtracting treatment effect of C vs A from treatment effect of B vs A.
+#' Function also calculates standard error and confidence interval for the relative risk (C vs B).
+#' This function is for an anchored comparison as it assumes a common comparator "A".
+#'  
+#' @param AB Log relative risk from AB trial (can be log hazard ratio or log odds ratio)
+#' @param AC Log relative risk from AC trial
+#' @param RR Specifies which type of relative risk is to be calculated. Options include "HR" for hazard ratio and "OR" for odds ratio.
+#' @param CI.perc Defines the percentage of confidence interval needed. 
+#' @return RR of C vs B with standard error and confidence interval
+#' @export
+
+find_ITC <- function(AB = NULL, AC = NULL, RR = "HR", CI.perc = 0.95){
+  
+  if(RR == "HR"){
+    logHR <- AC$logHR - AB$logHR
+    logHR_SE <- sqrt(AC$logHR_SE^2 + AB$logHR_SE^2)
+    
+    HR <- exp(logHR)
+    HR_SE <- logHR_SE * HR
+    HR_CI <- c(HR - qnorm(1 - (1-CI.perc)/2) * HR_SE, HR,
+               HR + qnorm(1 - (1-CI.perc)/2) * HR_SE)
+    
+    return(list(HR = HR, HR_SE = HR_SE, HR_CI = HR_CI))
+  } else if(RR == "OR"){
+    logOR <- AC$logOR - AB$logOR
+    logOR_SE <- sqrt(AC$logOR_SE^2 + AB$logOR_SE^2)
+    
+    OR <- exp(logOR)
+    OR_SE <- logOR_SE * OR
+    OR_CI <- c(OR - qnorm(1 - (1-CI.perc)/2) * OR_SE, OR,
+               OR + qnorm(1 - (1-CI.perc)/2) * OR_SE)
+    
+    return(list(OR = OR, OR_SE = OR_SE, OR_CI = OR_CI))
+  }
+}
+
+#' Calculate standard error from the reported confidence interval.
+#'
+#' Often times in analysis of clinical trials, standard error is not reported and only the confidence interval is reported.
+#' For instance, a given study can report a hazard ratio of 0.70 and 98.22% confidence interval of 0.55 to 0.90.
+#' This function calculates standard error of the estimate given the reported confidence interval.
+#'  
+#' @param Estimate Reported estimate of relative risk (i.e. hazard ratio or odds ratio). Note that this estimate is not logged.
+#' @param RR Specifies which type of relative risk is to be calculated. Options include "HR" for hazard ratio and "OR" for odds ratio.
+#' @param CI_lower Reported lower percentile value of the relative risk
+#' @param CI_upper Reported upper percentile value of the relative risk 
+#' @param CI_perc Reported percentage of confidence interval reported 
+#' @return Standard error estimate of the log relative risk
+#' @export
+
+find_SE_fromCI <- function(Estimate = NULL, RR = "HR",
+                           CI_lower = NULL, CI_upper = NULL, CI_perc = 0.95){
+  
+  if(RR == "HR"){
+    
+    HR <- Estimate
+    logHR <- log(HR)
+    
+    alpha <- 1 - CI_perc
+    logHR_SE <- (log(CI_upper) - log(CI_lower)) / (2 * qnorm(1 - alpha/2))
+    return(list(HR = HR, logHR = logHR, logHR_SE = logHR_SE))
+  } else if(RR == "OR"){
+    
+    OR <- Estimate
+    logOR <- log(OR)
+    
+    alpha <- 1 - CI_perc
+    logOR_SE <- (log(CI_upper) - log(CI_lower)) / (2 * qnorm(1 - alpha/2))
+    return(list(OR = OR, logOR = logOR, logOR_SE = logOR_SE))
+  }
 }
 
 

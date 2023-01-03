@@ -65,7 +65,6 @@ match_cov <- c("AGE",
 
 diagnostics <- wt_diagnostics(est_weights$analysis_data,
                               vars = match_cov)
-
 diagnostics$ESS
 diagnostics$Summary_of_weights
 diagnostics$Weight_profiles
@@ -87,50 +86,8 @@ histogram
 # characteristics before and after matching compared with the comparator
 # baseline characteristics:
 
-# Create an object to hold the output
-baseline_summary <- list('Intervention' = NA,
-                         'Intervention_weighted' = NA,
-                         'Comparator' = NA)
-
-# Summarise matching variables for weighted intervention data
-baseline_summary$Intervention_weighted <- est_weights$analysis_data \%>\%
-  transmute(AGE, SEX, SMOKE, ECOG0, wt) \%>\%
-  summarise_at(match_cov, list(~ weighted.mean(., wt)))
-
-# Summarise matching variables for unweighted intervention data
-baseline_summary$Intervention <- est_weights$analysis_data \%>\%
-  transmute(AGE, SEX, SMOKE, ECOG0, wt) \%>\%
-  summarise_at(match_cov, list(~ mean(.)))
-
-# baseline data for the comparator study
-baseline_summary$Comparator <- transmute(target_pop_standard,
-                                         AGE,
-                                         SEX,
-                                         SMOKE,
-                                         ECOG0)
-
-# Combine the three summaries
-# Takes a list of data frames and binds these together
-trt <- names(baseline_summary)
-baseline_summary <-  bind_rows(baseline_summary) \%>\%
-  transmute_all(sprintf, fmt = "\%.2f") \%>\% #apply rounding for presentation
-  transmute(ARM = as.character(trt), AGE, SEX, SMOKE, ECOG0)
-
-# Insert N of intervention  as number of patients
-baseline_summary$`N/ESS`[baseline_summary$ARM == "Intervention"] <- nrow(est_weights$analysis_data)
-
-# Insert N for comparator from target_pop_standard
-baseline_summary$`N/ESS`[baseline_summary$ARM == "Comparator"] <- target_pop_standard$N
-
-# Insert the ESS as the sample size for the weighted data
-# This is calculated above but can also be obtained using the estimate_ess function as shown below
-baseline_summary$`N/ESS`[baseline_summary$ARM == "Intervention_weighted"] <- est_weights$analysis_data \%>\%
-  estimate_ess(wt_col = 'wt')
-
-baseline_summary <- baseline_summary \%>\%
-  transmute(ARM, `N/ESS`=round(`N/ESS`,1), AGE, SEX, SMOKE, ECOG0)
-
-
+check_weights(analysis_data = est_weights$analysis_data, matching_vars = match_cov, 
+                          target_pop_standard = target_pop_standard)
 }
 \seealso{
 \code{\link{estimate_weights}}
