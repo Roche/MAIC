@@ -473,7 +473,7 @@ find_ITC <- function(AB = NULL, AC = NULL, RR = "HR", CI.perc = 0.95){
                HR + qnorm(1 - (1-CI.perc)/2) * HR_SE)
     names(HR_CI) <- c("lower", "upper")
     
-    return(list(HR = HR, HR_SE = HR_SE, HR_CI = HR_CI))
+    return(list(HR = HR, HR_SE = HR_SE, HR_CI = HR_CI, logHR = logHR, logHR_SE = logHR_SE))
   } else if(RR == "OR"){
     logOR <- AC$logOR - AB$logOR
     logOR_SE <- sqrt(AC$logOR_SE^2 + AB$logOR_SE^2)
@@ -484,7 +484,7 @@ find_ITC <- function(AB = NULL, AC = NULL, RR = "HR", CI.perc = 0.95){
                OR + qnorm(1 - (1-CI.perc)/2) * OR_SE)
     names(OR_CI) <- c("lower", "upper")
     
-    return(list(OR = OR, OR_SE = OR_SE, OR_CI = OR_CI))
+    return(list(OR = OR, OR_SE = OR_SE, OR_CI = OR_CI, logOR = logOR, logOR_SE = logOR_SE))
   }
 }
 
@@ -516,7 +516,7 @@ find_SE_fromCI <- function(Estimate = NULL, CI_lower = NULL, CI_upper = NULL,
     HR_CI <- c(CI_lower, CI_upper)
     names(HR_CI) <- c("lower", "upper")
     
-    return(list(HR = HR, HR_SE = HR_SE, HR_CI = HR_CI, logHR = logHR, logHR_SE = logHR_SE))  
+    return(list(HR = HR, HR_SE = HR_SE, HR_CI = HR_CI, logHR = logHR, logHR_SE = logHR_SE))
   } else if(RR == "OR"){
     
     OR <- Estimate
