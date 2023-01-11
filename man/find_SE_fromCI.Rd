@@ -6,20 +6,20 @@
 \usage{
 find_SE_fromCI(
   Estimate = NULL,
-  RR = "HR",
   CI_lower = NULL,
   CI_upper = NULL,
+  RR = "HR",
   CI_perc = 0.95
 )
 }
 \arguments{
 \item{Estimate}{Reported estimate of relative risk (i.e. hazard ratio or odds ratio). Note that this estimate is not logged.}
 
-\item{RR}{Specifies which type of relative risk is to be calculated. Options include "HR" for hazard ratio and "OR" for odds ratio.}
-
 \item{CI_lower}{Reported lower percentile value of the relative risk}
 
 \item{CI_upper}{Reported upper percentile value of the relative risk}
+
+\item{RR}{Specifies which type of relative risk is to be calculated. Options include "HR" for hazard ratio and "OR" for odds ratio.}
 
 \item{CI_perc}{Reported percentage of confidence interval reported}
 }

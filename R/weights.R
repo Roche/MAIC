@@ -495,24 +495,28 @@ find_ITC <- function(AB = NULL, AC = NULL, RR = "HR", CI.perc = 0.95){
 #' This function calculates standard error of the estimate given the reported confidence interval.
 #'  
 #' @param Estimate Reported estimate of relative risk (i.e. hazard ratio or odds ratio). Note that this estimate is not logged.
-#' @param RR Specifies which type of relative risk is to be calculated. Options include "HR" for hazard ratio and "OR" for odds ratio.
 #' @param CI_lower Reported lower percentile value of the relative risk
 #' @param CI_upper Reported upper percentile value of the relative risk 
+#' @param RR Specifies which type of relative risk is to be calculated. Options include "HR" for hazard ratio and "OR" for odds ratio.
 #' @param CI_perc Reported percentage of confidence interval reported 
 #' @return Standard error estimate of the log relative risk
 #' @export
 
-find_SE_fromCI <- function(Estimate = NULL, RR = "HR",
-                           CI_lower = NULL, CI_upper = NULL, CI_perc = 0.95){
+find_SE_fromCI <- function(Estimate = NULL, CI_lower = NULL, CI_upper = NULL, 
+                           RR = "HR", CI_perc = 0.95){
   
   if(RR == "HR"){
     
     HR <- Estimate
     logHR <- log(HR)
-    
     alpha <- 1 - CI_perc
     logHR_SE <- (log(CI_upper) - log(CI_lower)) / (2 * qnorm(1 - alpha/2))
-    return(list(HR = HR, logHR = logHR, logHR_SE = logHR_SE))
+
+    HR_SE <- logHR_SE * HR
+    HR_CI <- c(CI_lower, CI_upper)
+    names(HR_CI) <- c("lower", "upper")
+    
+    return(list(HR = HR, HR_SE = HR_SE, HR_CI = HR_CI, logHR = logHR, logHR_SE = logHR_SE))  
   } else if(RR == "OR"){
     
     OR <- Estimate
@@ -520,8 +524,11 @@ find_SE_fromCI <- function(Estimate = NULL, RR = "HR",
     
     alpha <- 1 - CI_perc
     logOR_SE <- (log(CI_upper) - log(CI_lower)) / (2 * qnorm(1 - alpha/2))
-    return(list(OR = OR, logOR = logOR, logOR_SE = logOR_SE))
+    
+    OR_SE <- logOR_SE * OR
+    OR_CI <- c(CI_lower, CI_upper)
+    names(OR_CI) <- c("lower", "upper")
+    
+    return(list(OR = OR, OR_SE = OR_SE, OR_CI = OR_CI, logOR = logOR, logOR_SE = logOR_SE))
   }
 }
-
-
