@@ -395,11 +395,15 @@ check_weights <- function(analysis_data = NULL, matching_vars = NULL,
   return(baseline_summary)
 }
 
-#' Calculate relative risk with standard error and confidence interval from log relative risk (i.e. log hazard ratio or log odds ratio) of the fitted model
-#'
-#' Convenient function to calculate relative risk (RR) from log relative risk (logRR).
+#' Retrieve relative risk and log relative risk with associated standard error and confidence interval 
+#' 
+#' Convenient function to retrieve both the relative risk (RR) and log relative risk (logRR).
 #' Relative risk would be hazard ratio for the cox regression and odds ratio for the logistic regression.
-#' This function uses delta method to calculate the standard error and confidence interval for the RR.
+#' Delta method is used to calculate the standard error. 
+#' There are two ways of finding CI: Use se(HR) obtained via the delta method and 
+#' calculate the end points or form a confidence interval for logHR and then exponentiate 
+#' the endpoints. We will use the second method since logHR converges to a normal distribution 
+#' more quickly than RR. This is also a default coxph method in \code{survival} R package.
 #'  
 #' @param fit Regression fit (i.e. cox regression or logistic regression) where the logRR can be extracted from
 #' @param logRR Instead of providing the fitted model (via parameter \code{fit}), one can specify logRR manually through this parameter
@@ -427,22 +431,32 @@ find_RR <- function(fit = NULL, logRR = NULL, logRR_SE = NULL, RR = "HR", CI.per
   
   if(RR == "HR"){
     
-    HR <- exp(logRR)
+    logHR <- logRR
+    logHR_SE <- logRR_SE
+    HR <- exp(logHR)
     HR_SE <- logRR_SE * HR
-    HR_CI <- c(HR - qnorm(1 - (1-CI.perc)/2) * HR_SE,
-               HR + qnorm(1 - (1-CI.perc)/2) * HR_SE)
+    
+    #HR_CI <- c(HR - qnorm(1 - (1-CI.perc)/2) * HR_SE,
+    #           HR + qnorm(1 - (1-CI.perc)/2) * HR_SE)
+    HR_CI <- exp(c(logHR - qnorm(1 - (1-CI.perc)/2) * logHR_SE, 
+                   logHR + qnorm(1 - (1-CI.perc)/2) * logHR_SE))
     names(HR_CI) <- c("lower", "upper")
     
-    return(list(HR = HR, HR_SE = HR_SE, HR_CI = HR_CI, logHR = logRR, logHR_SE = logRR_SE))  
+    return(list(HR = HR, HR_SE = HR_SE, HR_CI = HR_CI, logHR = logHR, logHR_SE = logHR_SE))  
   } else if(RR == "OR"){
     
+    logOR <- logRR
+    logOR_SE <- logRR_SE
     OR <- exp(logRR)
     OR_SE <- logRR_SE * OR
-    OR_CI <- c(OR - qnorm(1 - (1-CI.perc)/2) * OR_SE,
-               OR + qnorm(1 - (1-CI.perc)/2) * OR_SE)
+    
+    #OR_CI <- c(OR - qnorm(1 - (1-CI.perc)/2) * OR_SE,
+    #           OR + qnorm(1 - (1-CI.perc)/2) * OR_SE)
+    OR_CI <- exp(c(logOR - qnorm(1 - (1-CI.perc)/2) * logOR_SE, 
+                   logOR + qnorm(1 - (1-CI.perc)/2) * logOR_SE))
     names(OR_CI) <- c("lower", "upper")
     
-    return(list(OR = OR, OR_SE = OR_SE, OR_CI = OR_CI, logOR = logRR, logOR_SE = logRR_SE))  
+    return(list(OR = OR, OR_SE = OR_SE, OR_CI = OR_CI, logOR = logOR, logOR_SE = logOR_SE))  
   }
 }
 
@@ -453,6 +467,11 @@ find_RR <- function(fit = NULL, logRR = NULL, logRR_SE = NULL, RR = "HR", CI.per
 #' Function calculates treatment effect of C vs B via subtracting treatment effect of C vs A from treatment effect of B vs A.
 #' Function also calculates standard error and confidence interval for the relative risk (C vs B).
 #' This function is for an anchored comparison as it assumes a common comparator "A".
+#' Delta method is used to calculate the standard error. 
+#' There are two ways of finding CI: Use se(HR) obtained via the delta method and 
+#' calculate the end points or form a confidence interval for logHR and then exponentiate 
+#' the endpoints. We will use the second method since logHR converges to a normal distribution 
+#' more quickly than RR. This is also a default coxph method in \code{survival} R package.
 #'  
 #' @param AB Log relative risk from AB trial (can be log hazard ratio or log odds ratio)
 #' @param AC Log relative risk from AC trial
@@ -469,8 +488,10 @@ find_ITC <- function(AB = NULL, AC = NULL, RR = "HR", CI.perc = 0.95){
     
     HR <- exp(logHR)
     HR_SE <- logHR_SE * HR
-    HR_CI <- c(HR - qnorm(1 - (1-CI.perc)/2) * HR_SE,
-               HR + qnorm(1 - (1-CI.perc)/2) * HR_SE)
+    #HR_CI <- c(HR - qnorm(1 - (1-CI.perc)/2) * HR_SE,
+    #           HR + qnorm(1 - (1-CI.perc)/2) * HR_SE)
+    HR_CI <- exp(c(logHR - qnorm(1 - (1-CI.perc)/2) * logHR_SE, 
+                   logHR + qnorm(1 - (1-CI.perc)/2) * logHR_SE))
     names(HR_CI) <- c("lower", "upper")
     
     return(list(HR = HR, HR_SE = HR_SE, HR_CI = HR_CI, logHR = logHR, logHR_SE = logHR_SE))
@@ -480,8 +501,10 @@ find_ITC <- function(AB = NULL, AC = NULL, RR = "HR", CI.perc = 0.95){
     
     OR <- exp(logOR)
     OR_SE <- logOR_SE * OR
-    OR_CI <- c(OR - qnorm(1 - (1-CI.perc)/2) * OR_SE,
-               OR + qnorm(1 - (1-CI.perc)/2) * OR_SE)
+    #OR_CI <- c(OR - qnorm(1 - (1-CI.perc)/2) * OR_SE,
+    #           OR + qnorm(1 - (1-CI.perc)/2) * OR_SE)
+    OR_CI <- exp(c(logOR - qnorm(1 - (1-CI.perc)/2) * logOR_SE, 
+                   logOR + qnorm(1 - (1-CI.perc)/2) * logOR_SE))
     names(OR_CI) <- c("lower", "upper")
     
     return(list(OR = OR, OR_SE = OR_SE, OR_CI = OR_CI, logOR = logOR, logOR_SE = logOR_SE))
