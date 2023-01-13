@@ -2,7 +2,7 @@
 % Please edit documentation in R/weights.R
 \name{find_RR}
 \alias{find_RR}
-\title{Calculate relative risk with standard error and confidence interval from log relative risk (i.e. log hazard ratio or log odds ratio) of the fitted model}
+\title{Retrieve relative risk and log relative risk with associated standard error and confidence interval}
 \usage{
 find_RR(fit = NULL, logRR = NULL, logRR_SE = NULL, RR = "HR", CI.perc = 0.95)
 }
@@ -18,10 +18,15 @@ find_RR(fit = NULL, logRR = NULL, logRR_SE = NULL, RR = "HR", CI.perc = 0.95)
 \item{CI.perc}{Defines the percentage of confidence interval needed.}
 }
 \value{
-RR with standard error and confidence interval
+RR and logRR with standard error and confidence interval
 }
 \description{
-Convenient function to calculate relative risk (RR) from log relative risk (logRR).
+Convenient function to retrieve both the relative risk (RR) and log relative risk (logRR) either from
+fitted model or separate calculation.
 Relative risk would be hazard ratio for the cox regression and odds ratio for the logistic regression.
-This function uses delta method to calculate the standard error and confidence interval for the RR.
+Delta method is used to calculate the standard error. 
+There are two ways of finding CI: Use se(RR) obtained via the delta method and 
+calculate the end points or form a confidence interval for logRR and then exponentiate 
+the endpoints. We will use the second method since logRR converges to a normal distribution 
+more quickly than RR. This is also a default coxph method in \code{survival} R package.
 }

@@ -397,12 +397,13 @@ check_weights <- function(analysis_data = NULL, matching_vars = NULL,
 
 #' Retrieve relative risk and log relative risk with associated standard error and confidence interval 
 #' 
-#' Convenient function to retrieve both the relative risk (RR) and log relative risk (logRR).
+#' Convenient function to retrieve both the relative risk (RR) and log relative risk (logRR) either from
+#' fitted model or separate calculation.
 #' Relative risk would be hazard ratio for the cox regression and odds ratio for the logistic regression.
 #' Delta method is used to calculate the standard error. 
-#' There are two ways of finding CI: Use se(HR) obtained via the delta method and 
-#' calculate the end points or form a confidence interval for logHR and then exponentiate 
-#' the endpoints. We will use the second method since logHR converges to a normal distribution 
+#' There are two ways of finding CI: Use se(RR) obtained via the delta method and 
+#' calculate the end points or form a confidence interval for logRR and then exponentiate 
+#' the endpoints. We will use the second method since logRR converges to a normal distribution 
 #' more quickly than RR. This is also a default coxph method in \code{survival} R package.
 #'  
 #' @param fit Regression fit (i.e. cox regression or logistic regression) where the logRR can be extracted from
@@ -410,7 +411,7 @@ check_weights <- function(analysis_data = NULL, matching_vars = NULL,
 #' @param logRR_SE If logRR is specified, standard error has to be provided.
 #' @param RR Specifies which type of relative risk is to be calculated. Options include "HR" for hazard ratio and "OR" for odds ratio.
 #' @param CI.perc Defines the percentage of confidence interval needed. 
-#' @return RR with standard error and confidence interval
+#' @return RR and logRR with standard error and confidence interval
 #' @export
 
 find_RR <- function(fit = NULL, logRR = NULL, logRR_SE = NULL, RR = "HR", CI.perc = 0.95){
@@ -468,16 +469,16 @@ find_RR <- function(fit = NULL, logRR = NULL, logRR_SE = NULL, RR = "HR", CI.per
 #' Function also calculates standard error and confidence interval for the relative risk (C vs B).
 #' This function is for an anchored comparison as it assumes a common comparator "A".
 #' Delta method is used to calculate the standard error. 
-#' There are two ways of finding CI: Use se(HR) obtained via the delta method and 
-#' calculate the end points or form a confidence interval for logHR and then exponentiate 
-#' the endpoints. We will use the second method since logHR converges to a normal distribution 
+#' There are two ways of finding CI: Use se(RR) obtained via the delta method and 
+#' calculate the end points or form a confidence interval for logRR and then exponentiate 
+#' the endpoints. We will use the second method since logRR converges to a normal distribution 
 #' more quickly than RR. This is also a default coxph method in \code{survival} R package.
 #'  
 #' @param AB Log relative risk from AB trial (can be log hazard ratio or log odds ratio)
 #' @param AC Log relative risk from AC trial
 #' @param RR Specifies which type of relative risk is to be calculated. Options include "HR" for hazard ratio and "OR" for odds ratio.
 #' @param CI.perc Defines the percentage of confidence interval needed. 
-#' @return RR of C vs B with standard error and confidence interval
+#' @return RR and logRR of C vs B with standard error and confidence interval
 #' @export
 
 find_ITC <- function(AB = NULL, AC = NULL, RR = "HR", CI.perc = 0.95){
