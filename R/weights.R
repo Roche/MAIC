@@ -395,15 +395,16 @@ check_weights <- function(analysis_data = NULL, matching_vars = NULL,
   return(baseline_summary)
 }
 
-#' Retrieve relative risk and log relative risk with associated standard error and confidence interval 
+#' Retrieve relative risk and log relative risk with associated standard error and confidence interval
 #' 
 #' Convenient function to retrieve both the relative risk (RR) and log relative risk (logRR) either from
 #' fitted model or separate calculation.
 #' Relative risk would be hazard ratio for the cox regression and odds ratio for the logistic regression.
-#' Delta method is used to calculate the standard error. 
-#' There are two ways of finding CI: Use se(RR) obtained via the delta method and 
-#' calculate the end points or form a confidence interval for logRR and then exponentiate 
-#' the endpoints. We will use the second method since logRR converges to a normal distribution 
+#' Delta method is used to calculate the standard error of the relative risk. 
+#' There are two ways of finding CI of the relative risk: 
+#' use se(RR) obtained via the delta method and calculate the end points or 
+#' form a confidence interval for logRR and then exponentiate the endpoints. 
+#' We will use the second method since logRR converges to a normal distribution 
 #' more quickly than RR. This is also a default coxph method in \code{survival} R package.
 #'  
 #' @param fit Regression fit (i.e. cox regression or logistic regression) where the logRR can be extracted from
@@ -469,9 +470,10 @@ find_RR <- function(fit = NULL, logRR = NULL, logRR_SE = NULL, RR = "HR", CI.per
 #' Function also calculates standard error and confidence interval for the relative risk (C vs B).
 #' This function is for an anchored comparison as it assumes a common comparator "A".
 #' Delta method is used to calculate the standard error. 
-#' There are two ways of finding CI: Use se(RR) obtained via the delta method and 
-#' calculate the end points or form a confidence interval for logRR and then exponentiate 
-#' the endpoints. We will use the second method since logRR converges to a normal distribution 
+#' There are two ways of finding CI of the relative risk: 
+#' use se(RR) obtained via the delta method and calculate the end points or 
+#' form a confidence interval for logRR and then exponentiate the endpoints. 
+#' We will use the second method since logRR converges to a normal distribution 
 #' more quickly than RR. This is also a default coxph method in \code{survival} R package.
 #'  
 #' @param AB Log relative risk from AB trial (can be log hazard ratio or log odds ratio)
@@ -545,7 +547,6 @@ find_SE_fromCI <- function(Estimate = NULL, CI_lower = NULL, CI_upper = NULL,
     
     OR <- Estimate
     logOR <- log(OR)
-    
     alpha <- 1 - CI_perc
     logOR_SE <- (log(CI_upper) - log(CI_lower)) / (2 * qnorm(1 - alpha/2))
     

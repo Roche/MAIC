@@ -96,9 +96,9 @@ This function calculates standard error of the estimate given the reported confi
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">find_SE_fromCI</span><span class="op">(</span></span>
 <span>  Estimate <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  RR <span class="op">=</span> <span class="st">"HR"</span>,</span>
 <span>  CI_lower <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  CI_upper <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  RR <span class="op">=</span> <span class="st">"HR"</span>,</span>
 <span>  CI_perc <span class="op">=</span> <span class="fl">0.95</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -109,16 +109,16 @@ This function calculates standard error of the estimate given the reported confi
 <dd><p>Reported estimate of relative risk (i.e. hazard ratio or odds ratio). Note that this estimate is not logged.</p></dd>
 
 
-<dt>RR</dt>
-<dd><p>Specifies which type of relative risk is to be calculated. Options include "HR" for hazard ratio and "OR" for odds ratio.</p></dd>
-
-
 <dt>CI_lower</dt>
 <dd><p>Reported lower percentile value of the relative risk</p></dd>
 
 
 <dt>CI_upper</dt>
 <dd><p>Reported upper percentile value of the relative risk</p></dd>
+
+
+<dt>RR</dt>
+<dd><p>Specifies which type of relative risk is to be calculated. Options include "HR" for hazard ratio and "OR" for odds ratio.</p></dd>
 
 
 <dt>CI_perc</dt>

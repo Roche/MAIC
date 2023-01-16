@@ -24,9 +24,10 @@ RR and logRR with standard error and confidence interval
 Convenient function to retrieve both the relative risk (RR) and log relative risk (logRR) either from
 fitted model or separate calculation.
 Relative risk would be hazard ratio for the cox regression and odds ratio for the logistic regression.
-Delta method is used to calculate the standard error. 
-There are two ways of finding CI: Use se(RR) obtained via the delta method and 
-calculate the end points or form a confidence interval for logRR and then exponentiate 
-the endpoints. We will use the second method since logRR converges to a normal distribution 
+Delta method is used to calculate the standard error of the relative risk. 
+There are two ways of finding CI of the relative risk: 
+use se(RR) obtained via the delta method and calculate the end points or 
+form a confidence interval for logRR and then exponentiate the endpoints. 
+We will use the second method since logRR converges to a normal distribution 
 more quickly than RR. This is also a default coxph method in \code{survival} R package.
 }

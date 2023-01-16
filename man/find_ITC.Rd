@@ -24,8 +24,9 @@ Function calculates treatment effect of C vs B via subtracting treatment effect 
 Function also calculates standard error and confidence interval for the relative risk (C vs B).
 This function is for an anchored comparison as it assumes a common comparator "A".
 Delta method is used to calculate the standard error. 
-There are two ways of finding CI: Use se(RR) obtained via the delta method and 
-calculate the end points or form a confidence interval for logRR and then exponentiate 
-the endpoints. We will use the second method since logRR converges to a normal distribution 
+There are two ways of finding CI of the relative risk: 
+use se(RR) obtained via the delta method and calculate the end points or 
+form a confidence interval for logRR and then exponentiate the endpoints. 
+We will use the second method since logRR converges to a normal distribution 
 more quickly than RR. This is also a default coxph method in \code{survival} R package.
 }
