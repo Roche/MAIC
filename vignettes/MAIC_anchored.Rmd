@@ -234,7 +234,7 @@ HR_AC <- find_SE_fromCI(Estimate = HR_AC, CI_lower = HR_CI_AC[1], CI_upper = HR_
 HR_AC
 ```
 
-In the previous section, we have estimated is $d_{AB(AC)}$, but what we are more interested is the indirect treatment comparison of C vs B. We can calculate $\hat{d}_{BC(AC)}$ from $\hat{d}_{BC(AC)}$ = $\hat{d}_{AC(AC)}$ - $\hat{d}_{AB(AC)}$. We can calculate this indirect effect of C vs B through the function below.
+In the previous section, what we have estimated was $d_{AB(AC)}$, but what we are more interested is the indirect treatment comparison of C vs B. We can calculate $\hat{d}_{BC(AC)}$ from $\hat{d}_{BC(AC)}$ = $\hat{d}_{AC(AC)}$ - $\hat{d}_{AB(AC)}$. We can calculate this indirect effect of C vs B through the function below.
 
 ```{r}
 # Naive indirect effect of C vs B
