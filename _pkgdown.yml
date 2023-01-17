@@ -19,9 +19,9 @@ navbar:
     - text: "Vignette"
       menu:
         - text: "Unanchored example"
-        - href: articles/MAIC.html
+          href: articles/MAIC.html
         - text: "Anchored example"
-        - href: articles/MAIC_anchored.html
+          href: articles/MAIC_anchored.html
     - text: "Functions"
       href: reference/index.html
     - text: "Other Packages"
