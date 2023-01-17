@@ -4,10 +4,16 @@
     <loc>/404.html</loc>
   </url>
   <url>
-    <loc>/articles/index.html</loc>
+    <loc>/LICENSE.html</loc>
   </url>
   <url>
     <loc>/articles/MAIC.html</loc>
+  </url>
+  <url>
+    <loc>/articles/MAIC_anchored.html</loc>
+  </url>
+  <url>
+    <loc>/articles/index.html</loc>
   </url>
   <url>
     <loc>/authors.html</loc>
@@ -16,7 +22,7 @@
     <loc>/index.html</loc>
   </url>
   <url>
-    <loc>/LICENSE.html</loc>
+    <loc>/reference/MAIC.html</loc>
   </url>
   <url>
     <loc>/reference/bootstrap_HR.html</loc>
@@ -31,13 +37,13 @@
     <loc>/reference/check_weights.html</loc>
   </url>
   <url>
+    <loc>/reference/est_weights.html</loc>
+  </url>
+  <url>
     <loc>/reference/estimate_ess.html</loc>
   </url>
   <url>
     <loc>/reference/estimate_weights.html</loc>
-  </url>
-  <url>
-    <loc>/reference/est_weights.html</loc>
   </url>
   <url>
     <loc>/reference/find_ITC.html</loc>
@@ -53,9 +59,6 @@
   </url>
   <url>
     <loc>/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>/reference/MAIC.html</loc>
   </url>
   <url>
     <loc>/reference/profile_wts.html</loc>
