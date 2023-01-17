@@ -390,7 +390,7 @@ pre { /* Code block - determines code spacing between lines */
 <span><span class="co">#&gt; $logHR_SE</span></span>
 <span><span class="co">#&gt;      upper </span></span>
 <span><span class="co">#&gt; 0.02141749</span></span></code></pre></div>
-<p>In the previous section, we have estimated is <span class="math inline">\(d_{AB(AC)}\)</span>, but what we are more interested is the indirect treatment comparison of C vs B. We can calculate <span class="math inline">\(\hat{d}_{BC(AC)}\)</span> from <span class="math inline">\(\hat{d}_{BC(AC)}\)</span> = <span class="math inline">\(\hat{d}_{AC(AC)}\)</span> - <span class="math inline">\(\hat{d}_{AB(AC)}\)</span>. We can calculate this indirect effect of C vs B through the function below.</p>
+<p>In the previous section, what we have estimated was <span class="math inline">\(d_{AB(AC)}\)</span>, but what we are more interested is the indirect treatment comparison of C vs B. We can calculate <span class="math inline">\(\hat{d}_{BC(AC)}\)</span> from <span class="math inline">\(\hat{d}_{BC(AC)}\)</span> = <span class="math inline">\(\hat{d}_{AC(AC)}\)</span> - <span class="math inline">\(\hat{d}_{AB(AC)}\)</span>. We can calculate this indirect effect of C vs B through the function below.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Naive indirect effect of C vs B</span></span>
 <span><span class="fu"><a href="../reference/find_ITC.html">find_ITC</a></span><span class="op">(</span>AB <span class="op">=</span> <span class="va">HR_AB</span>, AC <span class="op">=</span> <span class="va">HR_AC</span><span class="op">)</span></span>
