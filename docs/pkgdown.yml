@@ -1,11 +1,7 @@
-pandoc: 1.19.2.1
-pkgdown: 1.6.1
+pandoc: 2.11.4
+pkgdown: 2.0.6
 pkgdown_sha: ~
 articles:
   MAIC: MAIC.html
-<<<<<<< HEAD
-last_built: 2023-03-02T16:04Z
-=======
-last_built: 2023-03-02T16:37Z
->>>>>>> c9d75723a64bbc8b5723a866f8f406afba8ef4bd
+last_built: 2023-03-02T16:56Z
 
