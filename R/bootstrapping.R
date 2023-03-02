@@ -51,56 +51,6 @@ bootstrap_HR <- function(intervention_data, matching, i, model, comparator_data,
   HR <- exp(cox_model$coefficients)
 }
 
-#' Bootstrapping for MAIC weighted hazard ratios for anchored comparison
-#'
-#' @param intervention_data A data frame containing individual patient data
-#'   from the intervention study.
-#' @param matching A character vector giving the names of the covariates to use
-#'   in matching. These names must match the column names in intervention_data.
-#' @param ref_treatment Reference treatment for the intervention_data
-#' @param i Index used to select a sample within \code{\link{boot}}.
-#' @param model A model formula in the form 'Surv(Time, Event==1) ~ ARM'.
-#'   Variable names need to match the corresponding columns in intervention_data.
-#' @param min_weight A numeric value that defines the minimum weight allowed. 
-#'   This value (default 0.0001) will replace weights estimated at 0 in a sample.
-#' @details This function is intended to be used in conjunction with the
-#'   \code{\link{boot}} function to return the statistic to be
-#'   bootstrapped. In this case by performing MAIC weighting using
-#'   {\link{estimate_weights}} and returning a weighted hazard ratio (HR) from a
-#'   Cox proportional hazards model. This is used as the 'statistic' argument in
-#'   the boot function.
-#' @return The logHR as a numeric value.
-#' @seealso \code{\link{estimate_weights}}, \code{\link{boot}}
-#' @export
-
-bootstrap_HR_anchored <- function(intervention_data, matching, ref_treatment, i, model, min_weight = 0.0001){
-  
-  # create a visible binding for R CMD check
-  wt <- NULL
-  
-  # Samples the data
-  bootstrap_data <- intervention_data[i,]
-  
-  # Estimates weights
-  perform_wt <- estimate_weights(intervention_data=bootstrap_data, matching_vars=matching)
-  
-  analysis_data <- perform_wt$analysis_data
-  analysis_data$ARM <- bootstrap_data$ARM
-  
-  # factor arm using the reference treatment
-  analysis_data$ARM <- stats::relevel(as.factor(analysis_data$ARM), ref= ref_treatment)
-  
-  # set weights that are below min_weight to min_weight to avoid issues with 0 values
-  analysis_data$wt <- ifelse(analysis_data$wt < min_weight, min_weight, analysis_data$wt)
-  
-  # survival data stat
-  cox_model <- survival::coxph(model, data = analysis_data, weights = wt)
-  
-  # report logHR - and not HR
-  logHR <- cox_model$coefficients
-  return(logHR)
-}
-
 
 
 #' Bootstrapping for MAIC weighted odds ratios
