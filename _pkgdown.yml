@@ -17,11 +17,7 @@ navbar:
     - icon: fa-home
       href: index.html
     - text: "Vignette"
-      menu:
-        - text: "Unanchored example"
-          href: articles/MAIC.html
-        - text: "Anchored example"
-          href: articles/MAIC_anchored.html
+      href: articles/MAIC.html
     - text: "Functions"
       href: reference/index.html
     - text: "Other Packages"
@@ -64,7 +60,6 @@ reference:
 - contents:
   - bootstrap_HR
   - bootstrap_OR
-  - bootstrap_HR_anchored
   - find_RR
   - find_ITC
   - find_SE_fromCI  
