@@ -60,9 +60,6 @@ reference:
 - contents:
   - bootstrap_HR
   - bootstrap_OR
-  - find_RR
-  - find_ITC
-  - find_SE_fromCI  
 - title: "Example data"
 - contents:
   - est_weights
