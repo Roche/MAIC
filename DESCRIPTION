@@ -7,7 +7,7 @@ Authors@R: c(
     person("Sarah", "Smith", email = "sarah.smith@bresmed.com", role = "aut"),
     person("Richard", "Birnie", email = "richard.birnie@bresmed.com", role = "aut"),
     person("Iain", "Bennett", email = "iain.bennett@roche.com", role = "aut"),
-    person("Michael", "Seo", email = "michael.seo@roche.com", role = "cre")
+    person("Michael", "Seo", email = "michael.seo@roche.com", role = "cre"),
     person("F. Hoffmann La Roche Ltd", role = c("cph"))
     )
 Description: A group of functions designed to perform matched-adjusted 
