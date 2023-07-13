@@ -13,7 +13,7 @@ estimate_weights(
 )
 }
 \arguments{
-\item{intervention_data}{A data frame containing individual patient data from
+\item{intervention_data}{A data frame containing individual patient data from 
 the intervention study. Intervention_data is assumed to have been preprocessed using 
 preprocess_data (i.e. centered using aggregate data means)}
 
@@ -31,7 +31,7 @@ as the method for maximum likelihood optimisation. Refer to \code{\link[stats]{o
 for options.}
 }
 \value{
-a list with 4 elements,
+A list with 4 elements
 \item{wt} a numeric vector of unscaled individual weights.
 \item{wt.rs} a numerical vector of rescaled individual weights, with summation equaling to sample size (# rows of input \code{EM})
 \item{ess} effective sample size, square of sum divided by sum of squares
@@ -42,8 +42,8 @@ Estimate propensity weights for matching-adjusted indirect comparison (MAIC).
 }
 \references{
 NICE DSU TECHNICAL SUPPORT DOCUMENT 18: METHODS FOR
-  POPULATION-ADJUSTED INDIRECT COMPARISONS IN SUBMSISSIONS TO NICE, REPORT BY
-  THE DECISION SUPPORT UNIT, December 2016
+POPULATION-ADJUSTED INDIRECT COMPARISONS IN SUBMSISSIONS TO NICE, REPORT BY
+THE DECISION SUPPORT UNIT, December 2016
 }
 \seealso{
 \code{\link{optim}}
