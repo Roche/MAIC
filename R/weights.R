@@ -16,12 +16,10 @@
 #'   as the method for maximum likelihood optimisation. Refer to \code{\link[stats]{optim}} 
 #'   for options.
 #' @return a list with 4 elements,
-#' \describe{
-#'   \item wt - a numeric vector of unscaled individual weights.
-#'   \item wt.rs - a numerical vector of rescaled individual weights, with summation equaling to sample size (# rows of input \code{EM})
-#'   \item ess - effective sample size, square of sum divided by sum of squares
-#'   \item opt - R object returned by \code{base::optim()}, for assess convergence and other details
-#' }
+#' \item wt - a numeric vector of unscaled individual weights.
+#' \item wt.rs - a numerical vector of rescaled individual weights, with summation equaling to sample size (# rows of input \code{EM})
+#' \item ess - effective sample size, square of sum divided by sum of squares
+#' \item opt - R object returned by \code{base::optim()}, for assess convergence and other details
 #' @references NICE DSU TECHNICAL SUPPORT DOCUMENT 18: METHODS FOR
 #'   POPULATION-ADJUSTED INDIRECT COMPARISONS IN SUBMSISSIONS TO NICE, REPORT BY
 #'   THE DECISION SUPPORT UNIT, December 2016

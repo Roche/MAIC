@@ -249,7 +249,7 @@ We use the <tt>estimate_weights</tt> function which uses <tt>optim</tt> function
 
 ```{r}
 weights <- estimate_weights(intervention_data = intervention_data,
-                            matching_vars = match_cov)
+                            match_cov = match_cov)
 str(weights)
 intervention_data <- intervention_data %>%
   mutate(wt = weights$wt, ARM = "Intervention")
