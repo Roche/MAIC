@@ -137,7 +137,6 @@ In this example scenario, age, sex, the Eastern Cooperative Oncology Group perfo
 ```{r}
 #devtools::install_github("roche/MAIC")
 library(MAIC)
-
 library(dplyr)
 library(survival) # for survfit
 library(survminer) # for ggsurvplot
@@ -243,20 +242,22 @@ head(intervention_data)
 head(target_pop)
 ```
 
-# Calculating weights
+# Calculating weights and check optimization worked
 
 We use the <tt>estimate_weights</tt> function which uses <tt>optim</tt> function in the <tt>stats</tt> library to optimize weights.
 
 ```{r}
 weights <- estimate_weights(intervention_data = intervention_data,
                             match_cov = match_cov)
-str(weights)
 intervention_data <- intervention_data %>%
   mutate(wt = weights$wt, ARM = "Intervention")
 head(intervention_data)
 ```
 
-
+```{r}
+check_weights(intervention_data, target_pop, target_pop_N = 300,
+              weights, covariate_list = match_cov)
+```
 
 
 
