@@ -71,6 +71,55 @@ meet. [@phillippo2016a] There are several ways of identifying prognostic variabl
 * Univariable/multivariable regression analyses to identify which covariates have a significant effect on the outcome
 * Subgroup analyses of clinical trials may identify interactions between patient characteristics and the relative treatment effect
 
+
+# Theory behind MAIC
+
+We will briefly go over the theory behind MAIC. For detailed information, see Signorovitch et al.  [@signorovitch2010] 
+
+Let us define $t_i$ to be the treatment patient $i$ received. We assume $t_i=0$ if the patient received intervention (IPD) and $t_i=1$ if the patient received comparator treatment. The causal effect of treatment $T=0$ vs $T=1$ on the mean of the outcome $Y$ can be estimated as below
+
+\[
+\frac{\sum_{i=1}^{n}y_{i}(1-t_{i})w_{i}}{\sum_{i=1}^{n}(1-t_{i})w_{i}}-\bar{y}_{1}
+\]
+
+where $w_i=\frac{Pr(T_i=1\mid x_i)}{Pr(T_i=0\mid x_i)}$ is the odds that patient $i$ received treatment $T=1$ vs $T=0$ (i.e. enrolls in aggregate data study vs IPD study) given baseline characteristics $x_i$. Thus, the patients receiving $T=0$ are re-weighted to match the distribution of patients receiving $T=1$. Note that this causal effect would be the case when the outcome $Y$ is continuous. If the outcome is binary, $Y$ would be a proportion and we would use a link function such as logit to give us the causal effect in an odds ratio scale. As in propensity score methods, we may assume $w_i$ to follow logistic regression form
+
+\[
+w_{i}=exp(x_{i}\beta)
+\]
+
+However, in order to estimate $\beta$, we cannot use maximum likelihood approach because we do not have IPD for both trials. Instead, we use method of moments. We estimate $\beta$ such that the weighted averages of the covariates in the IPD exactly matches the aggregate data averages. Mathematically speaking, we want to estimate $\beta$ such that:
+
+\[
+0=\frac{\sum_{i=1}^{n}x_{i}exp(x_i\hat{\beta})}{\sum_{i=1}^{n}exp(x_i\hat{\beta})}-\bar{x}_{agg}
+\]
+
+If the $x_i$ contains all confounders and the logistic regression for $w_i$ is correctly specified, we obtain a consistent estimate of the causal effect of intervention vs comparator treatment. Above equation is equivalent to
+
+\[
+0=\sum_{i=1}^{n}(x_{i}-\bar{x}_{agg})exp(x_{i}^{T}\hat{\beta})
+\]
+
+We could transform transform IPD by subtracting the aggregate data means (this is why centering is needed when preprocessing). 
+
+\[
+0=\sum_{i=1}^{n}x_{i}exp(x_{i}^{T}\hat{\beta})
+\]
+
+Note that this is the first derivative of
+
+\[
+Q(\beta)=\sum_{i=1}^{n}exp(x_{i}^{T}\hat{\beta})
+\]
+
+which has second derivative
+
+\[
+Q''(\beta)=\sum_{i=1}^{n}x_ix_i^Texp(x_{i}^{T}\hat{\beta})
+\]
+
+Since $Q''(\beta)$ is positive-definite for all $\beta$, $Q(\beta)$ is convex and any finite solution from the equation is unique and corresponds to the global minimum of $Q(\beta)$. Thus, we can use optimization methods to calculate $\beta$.
+
 # Example scenario
 
 We present an unanchored MAIC of two treatments in lung cancer with the treatments being compared labelled 'intervention' and 'comparator'. The two endpoints being compared are overall survival (a time to event outcome) and objective response (a binary outcome). The data used in this example have been simulated to resemble that of clinical trial data. The data available are:
@@ -181,19 +230,31 @@ If a median is provided, IPD is preprocessed to categorize the variable into a b
 
 Explain why.
 
+## R code to preprocessing and center IPD
 
-## R code to preprocessing both IPD and aggregate data
-
-The following function <tt>preprocess_data</tt> is used to preprocess data into a format that is suitable for calculating weights for MAIC. Once the data is preprocessed, we no longer require prefixes in the target population.
+The following function <tt>preprocess_data</tt> is used to preprocess data and center the IPD data so that it is ready for calculating weights. Once the data is preprocessed, we remove the prefixes in the target population.
 
 ```{r}
 preprocessed <- preprocess_data(intervention_input, target_pop)
 intervention_data <- preprocessed$intervention_data
 target_pop <- preprocessed$target_pop
+
+head(intervention_data)
+head(target_pop)
 ```
 
+# Calculating weights
 
+We use the <tt>estimate_weights</tt> function which uses <tt>optim</tt> function in the <tt>stats</tt> library to optimize weights.
 
+```{r}
+weights <- estimate_weights(intervention_data = intervention_data,
+                            matching_vars = match_cov)
+str(weights)
+intervention_data <- intervention_data %>%
+  mutate(wt = weights$analysis_data$wt, ARM = "Intervention")
+head(intervention_data)
+```
 
 
 

@@ -1,144 +1,95 @@
 
-# Functions for the estimation of propensity weights
-
-
-# Internal functions - Not exported ---------------------------------------
-# Objective function
-objfn <- function(a1, X){
-  sum(exp(X %*% a1))
-}
-
-# Gradient function
-gradfn <- function(a1, X){
-  colSums(sweep(X, 1, exp(X %*% a1), "*"))
-}
-
-# External functions ------------------------------------------------------
-
 #' Estimate MAIC propensity weights
 #'
 #' Estimate propensity weights for matching-adjusted indirect comparison (MAIC).
 #'
 #' @param intervention_data A data frame containing individual patient data from
-#'   the intervention study.
-#' @param matching_vars A character vector giving the names of the covariates to
+#'   the intervention study. Intervention_data is assumed to have been preprocessed using 
+#'   preprocess_data (i.e. centered using aggregate data means)
+#' @param match_cov A character vector giving the names of the covariates to
 #'   use in matching. These names must match the column names in intervention_data.
 #' @param method The method used for optimisation - The default is method =
 #'   "BFGS". Refer to \code{\link[stats]{optim}} for options.
+#' @param startVal a scalar, the starting value for all coefficients of the propensity score 
+#'   regression
 #' @param ... Additional arguments to be passed to optimisation functions such
 #'   as the method for maximum likelihood optimisation. Refer to \code{\link[stats]{optim}} 
 #'   for options.
-#'
-#' @details The premise of MAIC methods is to adjust for between-trial
-#'   differences in patient demographic or disease characteristics at baseline.
-#'   When a common treatment comparator or ‘linked network’ are unavailable, a
-#'   MAIC assumes that differences between absolute outcomes that would be
-#'   observed in each trial are entirely explained by imbalances in prognostic
-#'   variables and treatment effect modifiers.
-#'
-#'   The aim of the MAIC method is to estimate a set of propensity weights based
-#'   on prognostic variables and treatment effect modifiers. These weights can
-#'   be used in subsequent statistical analysis to adjust for differences in
-#'   patient characteristics between the population in the intervention trial
-#'   and the population in a comparator study. For additional details on the
-#'   statistical methods, refer to the package vignette.
-#'
-#'   The data required for an unanchored MAIC are:
-#'
-#'   \itemize{
-#'     \item Individual patient data from a single arm study of 'intervention'
-#'     \item Aggregate summary data for 'comparator'. This could be from a
-#'     single arm study of the comparator or from one arm of a randomized
-#'     controlled trial.
-#'     \item Psuedo patient data from the comparator study. This is not required
-#'     for the matching process but is needed to derive the relative treatment
-#'     effects between the intervention and comparator.
-#'     }
-#'
-#'     For the matching process:
-#'
-#'     \enumerate{
-#'       \item All binary variables to be used in the matching should be coded 1
-#'       and 0
-#'       \item The variable names need to be listed in a character vector called
-#'       match_cov
-#'       \item Aggregate baseline characteristics (number of patients, mean and
-#'       SD for continuous variables and proportion for binary variables) from
-#'       the comparator trial are needed as a data frame. Naming of the
-#'       covariates in this data frame should be consistent with variable names
-#'       in the intervention data.
-#'       \item Patient baseline characteristics in the intervention study are
-#'       centered on the value of the aggregate data from the comparator study
-#'       \item The estimate_weights function can then be used to estimate
-#'       propensity weights for each patient in the intervention study
-#'     }
-#'
-#'     For full details refer to the example below and the package vignette
-#'
-#' @return A list containing 2 objects. First, a data frame named analysis_data
-#'   containing intervention_data with additional columns named wt (weights) and
-#'   wt_rs (rescaled weights). Second, a vector called matching_vars of the
-#'   names of the centered matching variables used.
+#' @return a list with 4 elements,
+#' \describe{
+#'   \item wt - a numeric vector of unscaled individual weights.
+#'   \item wt.rs - a numerical vector of rescaled individual weights, with summation equaling to sample size (# rows of input \code{EM})
+#'   \item ess - effective sample size, square of sum divided by sum of squares
+#'   \item opt - R object returned by \code{base::optim()}, for assess convergence and other details
+#' }
 #' @references NICE DSU TECHNICAL SUPPORT DOCUMENT 18: METHODS FOR
 #'   POPULATION-ADJUSTED INDIRECT COMPARISONS IN SUBMSISSIONS TO NICE, REPORT BY
 #'   THE DECISION SUPPORT UNIT, December 2016
 #' @seealso \code{\link{optim}}
-#'
-#' @example inst/examples/MAIC_example_weights.R
-#'
 #' @export
-estimate_weights <- function(intervention_data, matching_vars, method = "BFGS", ...){
 
-  #Basic checks of inputs before proceeding
-  #Check intervention data is a data frame
-  assertthat::assert_that(
-    is.data.frame(intervention_data),
-    msg = "intervention_data is expected to be a data frame"
-  )
-
-  #Check that matching_vars is a character vector
-  assertthat::assert_that(
-    is.character(matching_vars),
-    msg = "matching_vars is expected to be a character vector"
-  )
-  #Check that all named matching variables are in the intervention dataset
-  assertthat::assert_that(
-    all(matching_vars %in% colnames(intervention_data)),
-    msg = "matching_vars contains variable names that are not in the intervention dataset"
-  )
-
-  # create visible local bindings for R CMD check
-  wt <- NULL
-
+estimate_weights <- function(intervention_data, match_cov, startVal = 0, 
+                             method = "BFGS", ...){
+  
+  # Check intervention_data is a data frame and match_cov is a character vector
+  if(!is.data.frame(intervention_data)){stop("intervention_data is expected to be a data frame")}
+  if(!is.character(match_cov)){stop("match_cov is expected to be a character vector")}
+  
+  # Check if match_cov name is included in the IPD data
+  
+  
+  # Check if there is any missingness in intervention_data
+  missing <- apply(intervention_data[,match_cov], 1, function(x) any(is.na(x)))
+  if(any(missing)){
+    stop(paste0("Following rows have missing values: ", paste(which(missing), collapse = ",")))
+  } 
+  
+  for(i in match_cov){
+    # Check that match_vars is in one of the columns of intervention_data
+    if(!paste0(i, "_centered") %in% colnames(intervention_data)){
+      stop(paste0("Variable ", i, " is not one of intervention_data column names"))
+    }
+    
+    # Check whether intervention_data has not been centered by the aggregate data means
+    # by looking at whether binary variables have only values of 0 and 1 
+    if(all(unique(intervention_data[,i]) == 2 & unique(intervention_data[,i]) %in% c(0,1))){
+      stop("intervention_data does not seem to be centered by the aggregate data means")
+    }
+  }
+  
+  # Objective function
+  objfn <- function(a1, X){
+    sum(exp(X %*% a1))
+  }
+  
+  # Gradient function
+  gradfn <- function(a1, X){
+    colSums(sweep(X, 1, exp(X %*% a1), "*"))
+  }
+  
   # Optimise Q(b) using Newton-Raphson techniques
-  opt1 <- stats::optim(par = rep(0,dim(as.data.frame(intervention_data[,matching_vars]))[2]),
-                fn = objfn,
-                gr = gradfn,
-                X = as.matrix(intervention_data[,matching_vars]),
-                method = method,
-                ...)
-
-  a1 <- opt1$par
-
-  # Calculate weights for intervention data and combine with dataset
-  data_with_wts <- dplyr::mutate(intervention_data,
-                                 wt = as.vector(exp(as.matrix(intervention_data[,matching_vars]) %*% a1)), # weights
-                                 wt_rs = (wt / sum(wt)) * nrow(intervention_data), # rescaled weights
-                                 ARM = "Intervention"
-  )
-
-
-  # Outputs are:
-  #       - the analysis data (intervention PLD with weights )
-  #       - A character  vector with the name of the matching variables
+  opt1 <- stats::optim(par = rep(startVal,dim(intervention_data[,match_cov])[2]),
+                       fn = objfn,
+                       gr = gradfn,
+                       X = as.matrix(intervention_data[,paste0(match_cov,"_centered")]),
+                       method = method,
+                       control = list(maxit = 300, trace = 2),
+                       ...)
+  
+  alpha <- opt1$par
+  wt <- as.vector(exp(as.matrix(intervention_data[,paste0(match_cov,"_centered")]) %*% alpha))
+  wt_rs <- (wt / sum(wt)) * nrow(intervention_data)
+  
   output <- list(
-    matching_vars = matching_vars,
-    analysis_data = data_with_wts
+    wt = wt,
+    wt_rs = wt_rs,
+    ess = sum(wt)^2 / sum(wt^2),
+    opt = opt1
   )
-
   return(output)
-
 }
+
+
 
 # Functions for summarizing the weights ----------------------------------------
 
