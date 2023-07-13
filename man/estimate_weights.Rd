@@ -13,29 +13,24 @@ estimate_weights(
 )
 }
 \arguments{
-\item{intervention_data}{A data frame containing individual patient data from 
-the intervention study. Intervention_data is assumed to have been preprocessed using 
-preprocess_data (i.e. centered using aggregate data means)}
+\item{intervention_data}{A data frame containing individual patient data from the intervention study. Intervention_data is assumed to have been preprocessed using preprocess_data (i.e. centered using aggregate data means)}
 
-\item{match_cov}{A character vector giving the names of the covariates to
-use in matching. These names must match the column names in intervention_data.}
+\item{match_cov}{A character vector giving the names of the covariates to use in matching. These names must match the column names in intervention_data.}
 
-\item{startVal}{a scalar, the starting value for all coefficients of the propensity score 
-regression}
+\item{startVal}{a scalar, the starting value for all coefficients of the propensity score regression}
 
-\item{method}{The method used for optimisation - The default is method =
-"BFGS". Refer to \code{\link[stats]{optim}} for options.}
+\item{method}{The method used for optimisation - The default is method = "BFGS". Refer to \code{\link[stats]{optim}} for options.}
 
-\item{...}{Additional arguments to be passed to optimisation functions such
-as the method for maximum likelihood optimisation. Refer to \code{\link[stats]{optim}} 
-for options.}
+\item{...}{Additional arguments to be passed to optimisation functions such as the method for maximum likelihood optimisation. Refer to \code{\link[stats]{optim}} for options.}
 }
 \value{
 A list with 4 elements
+\itemize{
  \item{wt} a numeric vector of unscaled individual weights.
  \item{wt.rs} a numerical vector of rescaled individual weights, with summation equaling to sample size (# rows of input \code{EM})
  \item{ess} effective sample size, square of sum divided by sum of squares
  \item{opt} R object returned by \code{base::optim()}, for assess convergence and other details
+}
 }
 \description{
 Estimate propensity weights for matching-adjusted indirect comparison (MAIC).
