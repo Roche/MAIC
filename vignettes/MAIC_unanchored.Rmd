@@ -68,33 +68,31 @@ meet. [@phillippo2016a] There are several ways of identifying prognostic variabl
 
 * Clinical expertise (when available to a project)
 * Published papers/previous submissions (what has been identified in the disease area previously)
-* Univariable/multivariable regression analyses to identify which covariates
-have a significant effect on the outcome
+* Univariable/multivariable regression analyses to identify which covariates have a significant effect on the outcome
 * Subgroup analyses of clinical trials may identify interactions between patient characteristics and the relative treatment effect
 
-# Example Scenario
+# Example scenario
 
-We present an unanchored MAIC of two treatments in lung cancer with the treatments being compared labelled 'intervention' and 'comparator'. This is just an example and an anchored example would follow similar preprocessing. The two endpoints being compared are overall survival (a time to event outcome) and objective response (a binary outcome). The data used in this example have been simulated to resemble that of clinical trial data. The data available are:
+We present an unanchored MAIC of two treatments in lung cancer with the treatments being compared labelled 'intervention' and 'comparator'. The two endpoints being compared are overall survival (a time to event outcome) and objective response (a binary outcome). The data used in this example have been simulated to resemble that of clinical trial data. The data available are:
 
 * Individual patient data from a single arm study of 'intervention'
 * Aggregate summary data for 'comparator'. This could be from a single arm study of the comparator or from one arm of a randomized controlled trial.
-* Psuedo patient data from the comparator study. This is not required for the
-matching process but is needed to derive the relative treatment effects between
-the intervention and comparator.
+* Psuedo patient data from the comparator study. This is not required for the matching process but is needed to derive the relative treatment effects between the intervention and comparator.
 
-In this example scenario, age, sex, the Eastern Cooperative Oncology Group performance status (ECOG PS), smoking status, and number of previous treatments have been identified as imbalanced prognostic variables/treatment effect modifiers.
+In this example scenario, age, sex, the Eastern Cooperative Oncology Group performance status (ECOG), smoking status, and number of previous treatments have been identified as imbalanced prognostic variables/treatment effect modifiers.
 
 # Preprocessing
 
 ## Load required R packages
 
 ```{r}
+#devtools::install_github("roche/MAIC")
+library(MAIC)
+
 library(dplyr)
 library(survival) # for survfit
 library(survminer) # for ggsurvplot
 library(boot) # for boot
-
-#devtools::install_github("roche/MAIC")
 ```
 
 ## Intervention trial IPD
@@ -114,32 +112,31 @@ The variables needed for the binary event analyses are:
 
 For the matching variables:
 
-* All binary variables to be used in the matching should be coded 1 and 0 (see
-example for sex below).
+* All binary variables to be used in the matching should be coded 1 and 0 (see example for sex below).
 * The variable names need to be listed in a character vector called
 <tt>match_cov</tt>.
 
-```{r, eval = FALSE}
+```{r}
 # Read in relevant ADaM data
-setwd("~/GitHub/maicplus/inst/dev/combined")
-adsl <- read.csv("adsl.csv")
-
-adrs <- read.csv(system.file("extdata", "adrs.csv", package = "maicplus",
+adsl <- read.csv(system.file("extdata", "adsl.csv", package = "MAIC",
                              mustWork = TRUE))
-adtte <- read.csv(system.file("extdata", "adtte.csv", package = "maicplus",
+adrs <- read.csv(system.file("extdata", "adrs.csv", package = "MAIC",
+                             mustWork = TRUE))
+adtte <- read.csv(system.file("extdata", "adtte.csv", package = "MAIC",
                               mustWork = TRUE))
 
 adsl <- adsl %>% # Data containing the matching variables
-  mutate(SEX=ifelse(SEX=="Male", 1, 0)) # Coded 1 for males and 0 for females
-
+  mutate(sex=ifelse(SEX=="Male", 1, 0)) %>% # Coded 1 for males and 0 for females
+  mutate(age_squared = AGE^2) # Create a variable for age squared
+  
 adrs <- adrs %>% # Response data
   filter(PARAM=="Response") %>%
   transmute(USUBJID, ARM, response=AVAL)
 
 adtte <- adtte %>% # Time to event data (overall survival)
   filter(PARAMCD=="OS") %>%
-  mutate(Event=1-CNSR) %>% #Set up coding as Event = 1, Censor = 0
-  transmute(USUBJID, ARM, Time=AVAL, Event)
+  mutate(event=1-CNSR) %>% #Set up coding as Event = 1, Censor = 0
+  transmute(USUBJID, ARM, time=AVAL, event)
 
 # Combine all intervention data
 intervention_input <- adsl %>%
@@ -148,50 +145,46 @@ intervention_input <- adsl %>%
 
 # Change to lower case
 names(intervention_input) <- tolower(names(intervention_input))
-intervention_input <- intervention_input %>% rename(Time = time, Event = event)
-
-# Create a variable for age squared
-intervention_input <- intervention_input %>%
-  mutate(age_squared = age^2)
 head(intervention_input)
 
+# Define variables you intend to match with
 match_cov <- c("age", "age_squared", "sex", "smoke", "ecog0", "n_pr_ther")
 ```
 
 ## Baseline data from the comparator trial
 
-The aggregate baseline characteristics from the comparator trial are needed as a data frame. Number of patients (N) should be provided if possible. Other possible characteristics include mean, median, or standard deviation of continuous variables and proportion for binary variables. Only a single summary measure of mean or median can be provided for continuous variables and if standard deviation is provided, mean of the continuous variable also needs to be specified. Possible missingness of binary varibles should be accounted for by subtracting the denominator by the missing count i.e. proportion = count / (N - missing).
+The aggregate baseline characteristics from the comparator trial are needed as a data frame. Possible characteristics include mean, median, or standard deviation of continuous variables and proportion for binary variables. For continuous variables, only a single summary measure of mean or median can be provided and if standard deviation is provided, mean also needs to be specified. Possible missingness of binary varibles should be accounted for by subtracting the denominator by the missing count i.e. proportion = count / (N - missing).
 
 The naming of comparator trial needs to be consistent with the IPD data variable name. The naming should be followed by the following suffixes accordingly: "_prop",  "_mean", "_median", "_sd". The R code below demonstrates some examples. 
 
-```{r, eval = FALSE}
-# Baseline aggregate data for the comparator population
-# Getting data from csv
-# target_pop <- read.csv(system.file("extdata", "aggregate_data_updated.csv",
-#                                   package = "MAIC", mustWork = TRUE))
-# TODO: Template?
-
-# Define target_pop manually
+```{r}
+# Define example target population
 target_pop <- data.frame(
-  N = 300,
   age_mean = 50.06,
   age_sd = 3.23,
   sex_prop = 147/300, #male proportion
   smoke_prop = 58/(300-2), #2 missing patients
   ecog0_prop = 105/300,
-  n_pr_ther_median = 3 #number of previous therapies
+  n_pr_ther_median = 3 #median number of previous therapies
 )
 ```
 
 ### How to handle standard deviation aggregate summary
 
-As described by Phillippo et al., balancing on both mean and standard deviation for continuous variables (where possible) may be considered in some cases. [@phillippo2016a] If a standard deviation is provided in the comparator population, preprocessing is done so that in the target population, $E(X^2)$ is calculated using the variance formula $Var(X)=E(X^{2})-E(X)^{2}$. As we will discuss in later sections, $E(X^2)$ in the comparator population is then used to center the $X^2$ variable in the IPD data.
+As described by Phillippo et al., balancing on both mean and standard deviation for continuous variables (where possible) may be considered in some cases. [@phillippo2016a] If a standard deviation is provided in the comparator population, preprocessing is done so that in the target population, $E(X^2)$ is calculated using the variance formula $Var(X)=E(X^{2})-E(X)^{2}$. This $E(X^2)$ in the target population is matched with the IPD level data, which is why $X^{2}$ was calculated during the preprocessing stage of IPD.
 
 ### How to handle median aggregate summary
 
-If a median is provided, IPD is preprocessed to categorize the variable into binary. All the values in the IPD that are higher than the comparator population median is assigned a value of 1. Conversely, all values that are lower are assigned a value of 0. Comparator population median is replaced by 0.5 to adjust to the categorization in the IPD data.
+If a median is provided, IPD is preprocessed to categorize the variable into a binary variable. All the values in the IPD that are higher than the comparator population median is assigned a value of 1. Conversely, all values that are lower are assigned a value of 0. Comparator population median is replaced by 0.5 to adjust to the categorization in the IPD data. The newly created IPD binary variable is matched so that the proportion is 0.5.
 
-The following function <tt>preprocess_data</tt> is used to preprocess different types of data, including standard deviation and median, into a format that is suitable for calculating weights for MAIC.
+### How to handle missing counts in aggregate data
+
+Explain why.
+
+
+## R code to preprocessing both IPD and aggregate data
+
+The following function <tt>preprocess_data</tt> is used to preprocess data into a format that is suitable for calculating weights for MAIC. Once the data is preprocessed, we no longer require prefixes in the target population.
 
 ```{r, eval = FALSE}
 preprocessed <- preprocess_data(intervention_input, target_pop)
@@ -201,7 +194,6 @@ target_pop <- preprocessed$target_pop
 
 
 
-### How to handle missing counts in aggregate data
 
 
 
