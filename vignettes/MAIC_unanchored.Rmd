@@ -1,0 +1,209 @@
+---
+title: "Matching-Adjusted Indirect Comparison: introduction and unanchored example of the <tt>MAIC</tt> package"
+author: "Roche"
+date: "`r Sys.Date()`"
+output: 
+  rmarkdown::html_vignette:
+    number_sections: true
+bibliography: references.bib
+csl: biomedicine.csl
+vignette: >
+  %\VignetteIndexEntry{Matching-Adjusted Indirect Comparison: introduction and unanchored example of the <tt>MAIC</tt> package}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+
+<style type="text/css">
+
+body{ /* Normal  */
+      font-size: 14px;
+}
+td {  /* Table  */
+  font-size: 10px;
+}
+h1.title {
+  font-size: 38px;
+}
+h1 { /* Header 1 */
+  font-size: 28px;
+  }
+h2 { /* Header 2 */
+    font-size: 22px;
+}
+h3 { /* Header 3 */
+  font-size: 18px;
+}
+code.r{ /* Code block */
+    font-size: 12px;
+}
+pre { /* Code block - determines code spacing between lines */
+    font-size: 14px;
+}
+</style>
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.width = 7,
+  fig.height = 6, message = FALSE, warning = FALSE
+)
+```
+
+# Introduction
+
+This package describes the steps required to perform a matching-adjusted indirect comparison (MAIC) analysis using the <tt>MAIC</tt> package in R where the endpoint of interest is either time-to-event (e.g. overall survival) or binary (e.g. objective tumor response).
+
+The methods described in this document are based on those originally described by Signorovitch et al. 2010 and described in the National Institute for Health and Care Excellence (NICE) Decision Support Unit (DSU) Technical Support Document (TSD) 18. [@signorovitch2010; @phillippo2016a]
+
+MAIC methods are often required when: 
+
+* There is no common comparator treatment to link a clinical trial of a new intervention to clinical trials of other treatments in a given disease area. For example if the only study of a new intervention is a single arm trial with no control group. This is commonly referred to as an unanchored MAIC.
+* A common comparator is available to link a clinical trial of a new intervention to a clinical trial of one other treatment in a given disease area but there are substantial differences in patient demographic or disease characteristics that are believed to be treatment effect modifiers. This is commonly referred to as an anchored MAIC.
+
+The premise of MAIC methods is to adjust for between-trial differences in patient demographic or disease characteristics at baseline. When a common treatment comparator or ‘linked network’ are unavailable, a MAIC assumes that differences between absolute outcomes that would be observed in each trial are entirely explained by imbalances in prognostic variables and treatment effect
+modifiers. Prognostic variables are those that are predictive of disease outcomes, independent of the treatment received. For example, older patients may have increased risk of death compared to younger patients. Treatment effect modifiers are those variables that influence the relative effect of one treatment compared to another. For example patients with a better performance status may experience a larger treatment benefit than those with a worse performance status. Under this assumption, every prognostic variable and every treatment effect modifier that is imbalanced between the two studies must be available. This assumption is generally considered very difficult to
+meet. [@phillippo2016a] There are several ways of identifying prognostic variables/treatment effect modifiers to be used in the MAIC analyses, some of which include:
+
+* Clinical expertise (when available to a project)
+* Published papers/previous submissions (what has been identified in the disease area previously)
+* Univariable/multivariable regression analyses to identify which covariates
+have a significant effect on the outcome
+* Subgroup analyses of clinical trials may identify interactions between patient characteristics and the relative treatment effect
+
+# Example Scenario
+
+We present an unanchored MAIC of two treatments in lung cancer with the treatments being compared labelled 'intervention' and 'comparator'. This is just an example and an anchored example would follow similar preprocessing. The two endpoints being compared are overall survival (a time to event outcome) and objective response (a binary outcome). The data used in this example have been simulated to resemble that of clinical trial data. The data available are:
+
+* Individual patient data from a single arm study of 'intervention'
+* Aggregate summary data for 'comparator'. This could be from a single arm study of the comparator or from one arm of a randomized controlled trial.
+* Psuedo patient data from the comparator study. This is not required for the
+matching process but is needed to derive the relative treatment effects between
+the intervention and comparator.
+
+In this example scenario, age, sex, the Eastern Cooperative Oncology Group performance status (ECOG PS), smoking status, and number of previous treatments have been identified as imbalanced prognostic variables/treatment effect modifiers.
+
+# Preprocessing
+
+## Load required R packages
+
+```{r}
+library(dplyr)
+library(survival) # for survfit
+library(survminer) # for ggsurvplot
+library(boot) # for boot
+
+#devtools::install_github("roche/MAIC")
+```
+
+## Intervention trial IPD
+
+This example reads in and combines data from three standard simulated data sets (adsl, adrs and adtte) which are saved as '.csv' files. The data may need some manipulation to standardize the variable names to ensure they are the same in all datasets.
+
+The variables needed for the time to event analyses are:
+
+* Time - a numeric variable
+* Event - a binary variable (event=1, censor=0)
+* Treatment - a character variable with the name of the intervention treatment 
+
+The variables needed for the binary event analyses are:
+
+* Response - a binary variable (event=1, no event=0)
+* Treatment - a character variable with the name of the intervention treatment
+
+For the matching variables:
+
+* All binary variables to be used in the matching should be coded 1 and 0 (see
+example for sex below).
+* The variable names need to be listed in a character vector called
+<tt>match_cov</tt>.
+
+```{r, eval = FALSE}
+# Read in relevant ADaM data
+setwd("~/GitHub/maicplus/inst/dev/combined")
+adsl <- read.csv("adsl.csv")
+
+adrs <- read.csv(system.file("extdata", "adrs.csv", package = "maicplus",
+                             mustWork = TRUE))
+adtte <- read.csv(system.file("extdata", "adtte.csv", package = "maicplus",
+                              mustWork = TRUE))
+
+adsl <- adsl %>% # Data containing the matching variables
+  mutate(SEX=ifelse(SEX=="Male", 1, 0)) # Coded 1 for males and 0 for females
+
+adrs <- adrs %>% # Response data
+  filter(PARAM=="Response") %>%
+  transmute(USUBJID, ARM, response=AVAL)
+
+adtte <- adtte %>% # Time to event data (overall survival)
+  filter(PARAMCD=="OS") %>%
+  mutate(Event=1-CNSR) %>% #Set up coding as Event = 1, Censor = 0
+  transmute(USUBJID, ARM, Time=AVAL, Event)
+
+# Combine all intervention data
+intervention_input <- adsl %>%
+  full_join(adrs, by=c("USUBJID", "ARM")) %>%
+  full_join(adtte, by=c("USUBJID", "ARM"))
+
+# Change to lower case
+names(intervention_input) <- tolower(names(intervention_input))
+intervention_input <- intervention_input %>% rename(Time = time, Event = event)
+
+# Create a variable for age squared
+intervention_input <- intervention_input %>%
+  mutate(age_squared = age^2)
+head(intervention_input)
+
+match_cov <- c("age", "age_squared", "sex", "smoke", "ecog0", "n_pr_ther")
+```
+
+## Baseline data from the comparator trial
+
+The aggregate baseline characteristics from the comparator trial are needed as a data frame. Number of patients (N) should be provided if possible. Other possible characteristics include mean, median, or standard deviation of continuous variables and proportion for binary variables. Only a single summary measure of mean or median can be provided for continuous variables and if standard deviation is provided, mean of the continuous variable also needs to be specified. Possible missingness of binary varibles should be accounted for by subtracting the denominator by the missing count i.e. proportion = count / (N - missing).
+
+The naming of comparator trial needs to be consistent with the IPD data variable name. The naming should be followed by the following suffixes accordingly: "_prop",  "_mean", "_median", "_sd". The R code below demonstrates some examples. 
+
+```{r, eval = FALSE}
+# Baseline aggregate data for the comparator population
+# Getting data from csv
+# target_pop <- read.csv(system.file("extdata", "aggregate_data_updated.csv",
+#                                   package = "MAIC", mustWork = TRUE))
+# TODO: Template?
+
+# Define target_pop manually
+target_pop <- data.frame(
+  N = 300,
+  age_mean = 50.06,
+  age_sd = 3.23,
+  sex_prop = 147/300, #male proportion
+  smoke_prop = 58/(300-2), #2 missing patients
+  ecog0_prop = 105/300,
+  n_pr_ther_median = 3 #number of previous therapies
+)
+```
+
+### How to handle standard deviation aggregate summary
+
+As described by Phillippo et al., balancing on both mean and standard deviation for continuous variables (where possible) may be considered in some cases. [@phillippo2016a] If a standard deviation is provided in the comparator population, preprocessing is done so that in the target population, $E(X^2)$ is calculated using the variance formula $Var(X)=E(X^{2})-E(X)^{2}$. As we will discuss in later sections, $E(X^2)$ in the comparator population is then used to center the $X^2$ variable in the IPD data.
+
+### How to handle median aggregate summary
+
+If a median is provided, IPD is preprocessed to categorize the variable into binary. All the values in the IPD that are higher than the comparator population median is assigned a value of 1. Conversely, all values that are lower are assigned a value of 0. Comparator population median is replaced by 0.5 to adjust to the categorization in the IPD data.
+
+The following function <tt>preprocess_data</tt> is used to preprocess different types of data, including standard deviation and median, into a format that is suitable for calculating weights for MAIC.
+
+```{r, eval = FALSE}
+preprocessed <- preprocess_data(intervention_input, target_pop)
+intervention_data <- preprocessed$intervention_data
+target_pop <- preprocessed$target_pop
+```
+
+
+
+### How to handle missing counts in aggregate data
+
+
+
+
+
