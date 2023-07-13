@@ -126,8 +126,8 @@ adtte <- read.csv(system.file("extdata", "adtte.csv", package = "MAIC",
                               mustWork = TRUE))
 
 adsl <- adsl %>% # Data containing the matching variables
-  mutate(sex=ifelse(SEX=="Male", 1, 0)) %>% # Coded 1 for males and 0 for females
-  mutate(age_squared = AGE^2) # Create a variable for age squared
+  mutate(SEX=ifelse(SEX=="Male", 1, 0)) %>% # Coded 1 for males and 0 for females
+  mutate(AGE_SQUARED = AGE^2) # Create a variable for age squared
   
 adrs <- adrs %>% # Response data
   filter(PARAM=="Response") %>%
@@ -135,8 +135,8 @@ adrs <- adrs %>% # Response data
 
 adtte <- adtte %>% # Time to event data (overall survival)
   filter(PARAMCD=="OS") %>%
-  mutate(event=1-CNSR) %>% #Set up coding as Event = 1, Censor = 0
-  transmute(USUBJID, ARM, time=AVAL, event)
+  mutate(EVENT=1-CNSR) %>% #Set up coding as Event = 1, Censor = 0
+  transmute(USUBJID, ARM, TIME=AVAL, EVENT)
 
 # Combine all intervention data
 intervention_input <- adsl %>%
