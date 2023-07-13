@@ -186,7 +186,7 @@ Explain why.
 
 The following function <tt>preprocess_data</tt> is used to preprocess data into a format that is suitable for calculating weights for MAIC. Once the data is preprocessed, we no longer require prefixes in the target population.
 
-```{r, eval = FALSE}
+```{r}
 preprocessed <- preprocess_data(intervention_input, target_pop)
 intervention_data <- preprocessed$intervention_data
 target_pop <- preprocessed$target_pop
