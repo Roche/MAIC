@@ -32,12 +32,10 @@ for options.}
 }
 \value{
 a list with 4 elements,
-\describe{
-  \item wt - a numeric vector of unscaled individual weights.
-  \item wt.rs - a numerical vector of rescaled individual weights, with summation equaling to sample size (# rows of input \code{EM})
-  \item ess - effective sample size, square of sum divided by sum of squares
-  \item opt - R object returned by \code{base::optim()}, for assess convergence and other details
-}
+\item{wt} a numeric vector of unscaled individual weights.
+\item{wt.rs} a numerical vector of rescaled individual weights, with summation equaling to sample size (# rows of input \code{EM})
+\item{ess} effective sample size, square of sum divided by sum of squares
+\item{opt} R object returned by \code{base::optim()}, for assess convergence and other details
 }
 \description{
 Estimate propensity weights for matching-adjusted indirect comparison (MAIC).
