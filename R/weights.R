@@ -3,26 +3,26 @@
 #'
 #' Estimate propensity weights for matching-adjusted indirect comparison (MAIC).
 #'
-#' @param intervention_data A data frame containing individual patient data from
-#'   the intervention study. Intervention_data is assumed to have been preprocessed using 
-#'   preprocess_data (i.e. centered using aggregate data means)
+#' @param intervention_data A data frame containing individual patient data from 
+#' the intervention study. Intervention_data is assumed to have been preprocessed using 
+#' preprocess_data (i.e. centered using aggregate data means)
 #' @param match_cov A character vector giving the names of the covariates to
-#'   use in matching. These names must match the column names in intervention_data.
+#' use in matching. These names must match the column names in intervention_data.
 #' @param method The method used for optimisation - The default is method =
-#'   "BFGS". Refer to \code{\link[stats]{optim}} for options.
+#' "BFGS". Refer to \code{\link[stats]{optim}} for options.
 #' @param startVal a scalar, the starting value for all coefficients of the propensity score 
-#'   regression
+#' regression
 #' @param ... Additional arguments to be passed to optimisation functions such
-#'   as the method for maximum likelihood optimisation. Refer to \code{\link[stats]{optim}} 
-#'   for options.
-#' @return a list with 4 elements,
+#' as the method for maximum likelihood optimisation. Refer to \code{\link[stats]{optim}} 
+#' for options.
+#' @return A list with 4 elements
 #' \item{wt} a numeric vector of unscaled individual weights.
 #' \item{wt.rs} a numerical vector of rescaled individual weights, with summation equaling to sample size (# rows of input \code{EM})
 #' \item{ess} effective sample size, square of sum divided by sum of squares
 #' \item{opt} R object returned by \code{base::optim()}, for assess convergence and other details
 #' @references NICE DSU TECHNICAL SUPPORT DOCUMENT 18: METHODS FOR
-#'   POPULATION-ADJUSTED INDIRECT COMPARISONS IN SUBMSISSIONS TO NICE, REPORT BY
-#'   THE DECISION SUPPORT UNIT, December 2016
+#' POPULATION-ADJUSTED INDIRECT COMPARISONS IN SUBMSISSIONS TO NICE, REPORT BY
+#' THE DECISION SUPPORT UNIT, December 2016
 #' @seealso \code{\link{optim}}
 #' @export
 
