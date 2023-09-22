@@ -2,7 +2,6 @@
 
 export(bootstrap_HR)
 export(bootstrap_OR)
-export(check_weights)
 export(estimate_ess)
 export(estimate_weights)
 export(hist_wts)

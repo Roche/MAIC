@@ -1,12 +1,13 @@
 #' Bootstrapping for MAIC weighted hazard ratios
 #'
-#' @param intervention_data A data frame containing individual patient data
+#' @param intervention_data  A data frame containing individual patient data
 #'   from the intervention study.
 #' @param matching A character vector giving the names of the covariates to use
 #'   in matching. These names must match the column names in intervention_data.
 #' @param i Index used to select a sample within \code{\link{boot}}.
 #' @param model A model formula in the form 'Surv(Time, Event==1) ~ ARM'.
-#'   Variable names need to match the corresponding columns in intervention_data.
+#'   Variable names need to match the corresponding columns in
+#'   intervention_data.
 #' @param comparator_data A data frame containing pseudo individual patient data
 #'   from the comparator study needed to derive the relative treatment effect.
 #'   The outcome variables names must match intervention_data.
@@ -21,10 +22,12 @@
 #'   the boot function.
 #'
 #' @return The HR as a numeric value.
+#'
 #' @seealso \code{\link{estimate_weights}}, \code{\link{boot}}
+#'
 #' @example inst/examples/MAIC_example_analysis.R
+#'
 #' @export
-
 bootstrap_HR <- function(intervention_data, matching, i, model, comparator_data, min_weight = 0.0001){
 
   # create a visible binding for R CMD check
@@ -43,14 +46,13 @@ bootstrap_HR <- function(intervention_data, matching, i, model, comparator_data,
   combined_data <- dplyr::bind_rows(perform_wt$analysis_data, comparator_data_wts)
   combined_data$ARM <- stats::relevel(as.factor(combined_data$ARM), ref="Comparator")
 
-  # set weights that are below min_weight to min_weight to avoid issues with 0 values
+  # set weights that are below eta to eta to avoid issues with 0 values
   combined_data$wt <- ifelse(combined_data$wt < min_weight, min_weight, combined_data$wt)
   
   # survival data stat
   cox_model <- survival::coxph(model, data = combined_data, weights = wt)
   HR <- exp(cox_model$coefficients)
 }
-
 
 
 #' Bootstrapping for MAIC weighted odds ratios

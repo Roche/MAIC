@@ -1,4 +1,3 @@
-
 # Functions for the estimation of propensity weights
 
 
@@ -22,7 +21,8 @@ gradfn <- function(a1, X){
 #' @param intervention_data A data frame containing individual patient data from
 #'   the intervention study.
 #' @param matching_vars A character vector giving the names of the covariates to
-#'   use in matching. These names must match the column names in intervention_data.
+#'   use in matching. These names must match the column names in
+#'   intervention_data.
 #' @param method The method used for optimisation - The default is method =
 #'   "BFGS". Refer to \code{\link[stats]{optim}} for options.
 #' @param ... Additional arguments to be passed to optimisation functions such
@@ -87,7 +87,7 @@ gradfn <- function(a1, X){
 #' @example inst/examples/MAIC_example_weights.R
 #'
 #' @export
-estimate_weights <- function(intervention_data, matching_vars, method = "BFGS", ...){
+estimate_weights <- function(intervention_data,  matching_vars, method = "BFGS", ...){
 
   #Basic checks of inputs before proceeding
   #Check intervention data is a data frame
@@ -296,9 +296,10 @@ hist_wts <- function(data, wt_col="wt", rs_wt_col="wt_rs", bin = 30) {
 #'   associated with each weight value.
 #'
 #' @seealso \code{\link{estimate_weights}}
+#'
 #' @example inst/examples/MAIC_example_weight_diagnostics.R
+#'
 #' @export
-
 profile_wts <- function(data, wt_col="wt", wt_rs="wt_rs", vars){
   profile_data <-  data %>%
     dplyr::select(tidyselect::all_of(vars), tidyselect::all_of(wt_col), tidyselect::all_of(wt_rs))
@@ -341,9 +342,10 @@ profile_wts <- function(data, wt_col="wt", wt_rs="wt_rs", vars){
 #' }
 #'
 #' @seealso \code{\link{estimate_weights}}, \code{\link{estimate_ess}}, \code{\link{summarize_wts}}, \code{\link{profile_wts}}
+#'
 #' @example inst/examples/MAIC_example_weight_diagnostics.R
+#'
 #' @export
-
 wt_diagnostics <- function(data, wt_col="wt", wt_rs="wt_rs", vars){
 
   # ESS
@@ -362,35 +364,8 @@ wt_diagnostics <- function(data, wt_col="wt", wt_rs="wt_rs", vars){
   return(output)
 }
 
-#' Checking whether optimization has worked
-#'
-#' Convenient function to check whether the re-weighted baseline characteristics for
-#' the intervention-treated patients match those aggregate characteristics from the
-#' comparator trial and outputs a summary that can be used for reporting
-#' 
-#' @param analysis_data A data frame containing individual patient data from
-#'   the intervention study, including a column containing the weights (derived
-#'   using estimate_weights).
-#' @param matching_vars A character vector giving the names of the covariates that were used to estimate weights 
-#' @param target_pop_standard aggregate characteristics of the comparator trial with the same naming as the analysis_data
-#' @example inst/examples/MAIC_example_weight_diagnostics.R
-#' @seealso \code{\link{estimate_weights}}
-#' @return Summary of patient characteristics before and after matching, including ESS and comparator trial aggregate summary
-#' @export
 
-check_weights <- function(analysis_data = NULL, matching_vars = NULL, 
-                          target_pop_standard = NULL){
-  
-  ARM <- c("Intervention", "Intervention_weighted", "Comparator")
-  ESS <- round(c(nrow(analysis_data), estimate_ess(analysis_data),
-                 target_pop_standard$N))
-  
-  weighted_cov <- analysis_data %>% summarise_at(matching_vars, list(~ weighted.mean(., wt)))
-  unweighted_cov <-  analysis_data %>% summarise_at(matching_vars, list(~ mean(.)))
-  comparator_cov <- select(target_pop_standard, all_of(matching_vars))
-  
-  cov <- rbind(unweighted_cov, weighted_cov, comparator_cov)
-  baseline_summary <- cbind(ARM, ESS, cov)
-  
-  return(baseline_summary)
-}
+
+
+
+

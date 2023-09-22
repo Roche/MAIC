@@ -10,6 +10,7 @@
 # 1) make any updates to the package 
 # 2) update documentation using devtools
 devtools::document()
+devtools::document()
 
 # 3) reinstall the updated package 
 devtools::install()

@@ -23,7 +23,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MAIC</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.4.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.3.0</span>
       </span>
     </div>
 
@@ -174,6 +174,7 @@ default is wt.</p></dd>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">diagnostics</span> <span class="op">&lt;-</span> <span class="fu"><a href="wt_diagnostics.html">wt_diagnostics</a></span><span class="op">(</span><span class="va">est_weights</span><span class="op">$</span><span class="va">analysis_data</span>,</span></span>
 <span class="r-in"><span>                              vars <span class="op">=</span> <span class="va">match_cov</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">diagnostics</span><span class="op">$</span><span class="va">ESS</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 157.0715</span>
 <span class="r-in"><span><span class="va">diagnostics</span><span class="op">$</span><span class="va">Summary_of_weights</span></span></span>
@@ -399,9 +400,50 @@ default is wt.</p></dd>
 <span class="r-in"><span><span class="co"># characteristics before and after matching compared with the comparator</span></span></span>
 <span class="r-in"><span><span class="co"># baseline characteristics:</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="fu"><a href="check_weights.html">check_weights</a></span><span class="op">(</span>analysis_data <span class="op">=</span> <span class="va">est_weights</span><span class="op">$</span><span class="va">analysis_data</span>, matching_vars <span class="op">=</span> <span class="va">match_cov</span>, </span></span>
-<span class="r-in"><span>                          target_pop_standard <span class="op">=</span> <span class="va">target_pop_standard</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in check_dot_cols(.vars, .cols):</span> object 'match_cov' not found</span>
+<span class="r-in"><span><span class="co"># Create an object to hold the output</span></span></span>
+<span class="r-in"><span><span class="va">baseline_summary</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">'Intervention'</span> <span class="op">=</span> <span class="cn">NA</span>,</span></span>
+<span class="r-in"><span>                         <span class="st">'Intervention_weighted'</span> <span class="op">=</span> <span class="cn">NA</span>,</span></span>
+<span class="r-in"><span>                         <span class="st">'Comparator'</span> <span class="op">=</span> <span class="cn">NA</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Summarise matching variables for weighted intervention data</span></span></span>
+<span class="r-in"><span><span class="va">baseline_summary</span><span class="op">$</span><span class="va">Intervention_weighted</span> <span class="op">&lt;-</span> <span class="va">est_weights</span><span class="op">$</span><span class="va">analysis_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">transmute</a></span><span class="op">(</span><span class="va">AGE</span>, <span class="va">SEX</span>, <span class="va">SMOKE</span>, <span class="va">ECOG0</span>, <span class="va">wt</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise_all.html" class="external-link">summarise_at</a></span><span class="op">(</span><span class="va">match_cov</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/stats/weighted.mean.html" class="external-link">weighted.mean</a></span><span class="op">(</span><span class="va">.</span>, <span class="va">wt</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Summarise matching variables for unweighted intervention data</span></span></span>
+<span class="r-in"><span><span class="va">baseline_summary</span><span class="op">$</span><span class="va">Intervention</span> <span class="op">&lt;-</span> <span class="va">est_weights</span><span class="op">$</span><span class="va">analysis_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">transmute</a></span><span class="op">(</span><span class="va">AGE</span>, <span class="va">SEX</span>, <span class="va">SMOKE</span>, <span class="va">ECOG0</span>, <span class="va">wt</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise_all.html" class="external-link">summarise_at</a></span><span class="op">(</span><span class="va">match_cov</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">.</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># baseline data for the comparator study</span></span></span>
+<span class="r-in"><span><span class="va">baseline_summary</span><span class="op">$</span><span class="va">Comparator</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">transmute</a></span><span class="op">(</span><span class="va">target_pop_standard</span>,</span></span>
+<span class="r-in"><span>                                         <span class="va">AGE</span>,</span></span>
+<span class="r-in"><span>                                         <span class="va">SEX</span>,</span></span>
+<span class="r-in"><span>                                         <span class="va">SMOKE</span>,</span></span>
+<span class="r-in"><span>                                         <span class="va">ECOG0</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Combine the three summaries</span></span></span>
+<span class="r-in"><span><span class="co"># Takes a list of data frames and binds these together</span></span></span>
+<span class="r-in"><span><span class="va">trt</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">baseline_summary</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">baseline_summary</span> <span class="op">&lt;-</span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind.html" class="external-link">bind_rows</a></span><span class="op">(</span><span class="va">baseline_summary</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate_all.html" class="external-link">transmute_all</a></span><span class="op">(</span><span class="va">sprintf</span>, fmt <span class="op">=</span> <span class="st">"%.2f"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="co">#apply rounding for presentation</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">transmute</a></span><span class="op">(</span>ARM <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">trt</span><span class="op">)</span>, <span class="va">AGE</span>, <span class="va">SEX</span>, <span class="va">SMOKE</span>, <span class="va">ECOG0</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Insert N of intervention  as number of patients</span></span></span>
+<span class="r-in"><span><span class="va">baseline_summary</span><span class="op">$</span><span class="va">`N/ESS`</span><span class="op">[</span><span class="va">baseline_summary</span><span class="op">$</span><span class="va">ARM</span> <span class="op">==</span> <span class="st">"Intervention"</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">est_weights</span><span class="op">$</span><span class="va">analysis_data</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Insert N for comparator from target_pop_standard</span></span></span>
+<span class="r-in"><span><span class="va">baseline_summary</span><span class="op">$</span><span class="va">`N/ESS`</span><span class="op">[</span><span class="va">baseline_summary</span><span class="op">$</span><span class="va">ARM</span> <span class="op">==</span> <span class="st">"Comparator"</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">target_pop_standard</span><span class="op">$</span><span class="va">N</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Insert the ESS as the sample size for the weighted data</span></span></span>
+<span class="r-in"><span><span class="co"># This is calculated above but can also be obtained using the estimate_ess function as shown below</span></span></span>
+<span class="r-in"><span><span class="va">baseline_summary</span><span class="op">$</span><span class="va">`N/ESS`</span><span class="op">[</span><span class="va">baseline_summary</span><span class="op">$</span><span class="va">ARM</span> <span class="op">==</span> <span class="st">"Intervention_weighted"</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">est_weights</span><span class="op">$</span><span class="va">analysis_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span></span>
+<span class="r-in"><span>  <span class="fu">estimate_ess</span><span class="op">(</span>wt_col <span class="op">=</span> <span class="st">'wt'</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">baseline_summary</span> <span class="op">&lt;-</span> <span class="va">baseline_summary</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">transmute</a></span><span class="op">(</span><span class="va">ARM</span>, `N/ESS`<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">`N/ESS`</span>,<span class="fl">1</span><span class="op">)</span>, <span class="va">AGE</span>, <span class="va">SEX</span>, <span class="va">SMOKE</span>, <span class="va">ECOG0</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -412,7 +454,7 @@ default is wt.</p></dd>
 
 
       <footer><div class="copyright">
-  <p></p><p>Developed by Jo Gregory, Sarah Smith, Richard Birnie, Iain Bennett, Michael Seo.</p>
+  <p></p><p>Developed by Iain Bennett, Jo Gregory, Sarah Smith, Richard Birnie.</p>
 </div>
 
 <div class="pkgdown">

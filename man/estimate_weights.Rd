@@ -11,7 +11,8 @@ estimate_weights(intervention_data, matching_vars, method = "BFGS", ...)
 the intervention study.}
 
 \item{matching_vars}{A character vector giving the names of the covariates to
-use in matching. These names must match the column names in intervention_data.}
+use in matching. These names must match the column names in
+intervention_data.}
 
 \item{method}{The method used for optimisation - The default is method =
 "BFGS". Refer to \code{\link[stats]{optim}} for options.}
