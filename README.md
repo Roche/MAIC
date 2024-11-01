@@ -1,4 +1,4 @@
-The current package MAIC is no longer maintained. We recommend using the following package instead.
+The current package MAIC is no longer developed. We recommend using the following package instead.
 
 https://hta-pharma.github.io/maicplus/main/
 
