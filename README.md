@@ -1,3 +1,7 @@
+The current package MAIC is no longer developed. We recommend using the following package instead.
+
+https://hta-pharma.github.io/maicplus/main/
+
 # MAIC
 
 [![DOI](https://zenodo.org/badge/419687389.svg)](https://zenodo.org/badge/latestdoi/419687389)
