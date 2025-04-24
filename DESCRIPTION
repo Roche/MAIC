@@ -3,7 +3,7 @@ Type: Package
 Title: Package to Perform Matched-adjusted Indirect Comparisons
 Version: 0.3.0
 Authors@R: c(
-    person("Iain", "Bennett", email = "iain.bennett@roche.com", role = "cre"),
+    person("Iain", "Bennett", email = "iain.bennett@roche.com", role = "aut"),
     person("Jo", "Gregory", email = "joanne.gregory@bresmed.com", role = "aut"),
     person("Sarah", "Smith", email = "sarah.smith@bresmed.com", role = "aut"),
     person("Richard", "Birnie", email = "richard.birnie@bresmed.com", role = "aut"),
